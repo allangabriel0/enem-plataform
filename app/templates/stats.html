@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Estatísticas — ENEM Studies{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>Estatísticas</h1>
+  <a href="/" class="btn btn-ghost btn-sm">← Dashboard</a>
+</div>
+
+<!-- Totais globais -->
+<div class="stats-bar" style="margin-bottom:1.75rem">
+  <div class="stat-card">
+    <div class="stat-card__value">{{ overall.total }}</div>
+    <div class="stat-card__label">Total de vídeos</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__value" style="color:var(--success)">{{ overall.completed }}</div>
+    <div class="stat-card__label">Concluídos</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__value" style="color:var(--warning)">{{ overall.in_progress }}</div>
+    <div class="stat-card__label">Em andamento</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__value" style="color:var(--primary-h)">{{ overall.total_h }}h</div>
+    <div class="stat-card__label">Horas assistidas</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__value" style="color:var(--primary-h)">{{ overall.pct }}%</div>
+    <div class="stat-card__label">Progresso geral</div>
+  </div>
+</div>
+
+<!-- Barra de progresso geral -->
+<div style="margin-bottom:2rem">
+  <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--text-dim);margin-bottom:.4rem">
+    <span>Progresso geral</span>
+    <span>{{ overall.completed }}/{{ overall.total }} vídeos</span>
+  </div>
+  <div class="progress-bar" style="height:10px;border-radius:99px">
+    <div class="progress-bar__fill{% if overall.pct == 100 %} progress-bar__fill--done{% endif %}"
+         style="width:{{ overall.pct }}%;border-radius:99px"></div>
+  </div>
+</div>
+
+<!-- Por matéria -->
+<h2 style="margin-bottom:1rem;font-size:1rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">
+  Por matéria
+</h2>
+
+{% if subject_stats %}
+<div style="display:flex;flex-direction:column;gap:.75rem">
+  {% for s in subject_stats %}
+  <div class="card" style="padding:.85rem 1.1rem">
+
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.55rem;flex-wrap:wrap">
+      <span style="font-weight:700;font-size:.95rem;flex:1">{{ s.subject }}</span>
+      <span class="text-xs text-dim">{{ s.watch_h }}h assistidas</span>
+      <span style="font-size:.8rem;font-weight:700;
+                   color:{% if s.pct == 100 %}var(--success){% elif s.pct > 50 %}var(--primary-h){% else %}var(--text-muted){% endif %}">
+        {{ s.pct }}%
+      </span>
+    </div>
+
+    <div class="progress-bar" style="height:8px;margin-bottom:.5rem">
+      <div class="progress-bar__fill{% if s.pct == 100 %} progress-bar__fill--done{% endif %}"
+           style="width:{{ s.pct }}%"></div>
+    </div>
+
+    <div style="display:flex;gap:1.25rem;font-size:.78rem;color:var(--text-dim)">
+      <span>📹 {{ s.total }} vídeos</span>
+      <span style="color:var(--success)">✓ {{ s.completed }} concluídos</span>
+      {% if s.in_progress > 0 %}
+        <span style="color:var(--warning)">▶ {{ s.in_progress }} em andamento</span>
+      {% endif %}
+      <span style="margin-left:auto">
+        {{ s.total - s.completed - s.in_progress }} não iniciados
+      </span>
+    </div>
+
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align:center;padding:2.5rem 1rem">
+  <p style="color:var(--text-muted)">Nenhum dado disponível. Sincronize os vídeos primeiro.</p>
+  <a href="/" class="btn btn-primary btn-sm mt-2">← Dashboard</a>
+</div>
+{% endif %}
+
+{% endblock %}

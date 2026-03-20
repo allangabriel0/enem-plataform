@@ -33,6 +33,21 @@
 </div>
 {% endif %}
 
+<!-- Painel de progresso do sync (aparece durante sincronização) -->
+<div id="sync-panel" style="display:none;margin-bottom:1rem">
+  <div class="card" style="padding:.85rem 1rem">
+    <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.65rem">
+      <span id="sync-panel-icon" style="font-size:1rem">⟳</span>
+      <strong id="sync-panel-title" style="font-size:.9rem">Sincronizando...</strong>
+      <span id="sync-panel-elapsed" class="text-xs text-dim" style="margin-left:auto"></span>
+    </div>
+    <div id="sync-panel-groups" style="display:flex;flex-direction:column;gap:.3rem;font-size:.82rem"></div>
+    <div class="progress-bar" style="margin-top:.65rem;height:6px">
+      <div id="sync-panel-bar" class="progress-bar__fill" style="width:0%;transition:width .4s"></div>
+    </div>
+  </div>
+</div>
+
 <!-- =====================================================================
      Stats bar
      ===================================================================== -->
@@ -337,46 +352,92 @@
 <script>
 /* Sincronização com Telegram */
 (function () {
+  let pollInterval = null;
+
+  function startPoll() {
+    if (pollInterval) return;
+    pollInterval = setInterval(pollSyncStatus, 1500);
+  }
+
+  function stopPoll() {
+    if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+  }
+
+  async function pollSyncStatus() {
+    try {
+      const r = await fetch('/api/sync-status');
+      if (!r.ok) return;
+      const s = await r.json();
+      updatePanel(s);
+      if (!s.running) {
+        stopPoll();
+        if (s.total_added !== undefined) {
+          showToast(`Sync: +${s.total_added} novos · ~${s.total_updated} atualizados · ${s.total_materials} materiais (${s.elapsed}s)`, 'success', 6000);
+          setTimeout(() => location.reload(), 2000);
+        }
+      }
+    } catch {}
+  }
+
+  function updatePanel(s) {
+    const panel = document.getElementById('sync-panel');
+    const title = document.getElementById('sync-panel-title');
+    const icon  = document.getElementById('sync-panel-icon');
+    const elapsed = document.getElementById('sync-panel-elapsed');
+    const groupsEl = document.getElementById('sync-panel-groups');
+    const bar = document.getElementById('sync-panel-bar');
+
+    if (!s.running && !s.total_groups) { panel.style.display = 'none'; return; }
+    panel.style.display = '';
+
+    if (s.running) {
+      icon.textContent = '⟳';
+      icon.style.animation = 'spin 1s linear infinite';
+      title.textContent = `Sincronizando${s.current_group ? ': ' + s.current_group : ''}...`;
+    } else {
+      icon.textContent = '✓';
+      icon.style.animation = '';
+      title.textContent = `Sync concluído em ${s.elapsed}s`;
+    }
+    elapsed.textContent = s.elapsed ? `${s.elapsed}s` : '';
+
+    const pct = s.total_groups > 0 ? Math.round(s.done_groups / s.total_groups * 100) : 0;
+    bar.style.width = pct + '%';
+    if (pct === 100) bar.classList.add('progress-bar__fill--done');
+
+    groupsEl.innerHTML = s.groups.map(g =>
+      `<div style="display:flex;gap:.5rem;align-items:center">
+        <span style="color:${g.done ? 'var(--success)' : 'var(--text-dim)'}">${g.done ? '✓' : '○'}</span>
+        <span style="flex:1;color:${g.done ? 'var(--text)' : 'var(--text-muted)'}">${g.name}</span>
+        ${g.done ? `<span class="text-xs text-dim">+${g.added} · ~${g.updated}</span>` : ''}
+      </div>`
+    ).join('');
+  }
+
   function doSync(btn, force) {
     if (!btn) return;
-    const icon = btn.querySelector('#sync-icon') || btn;
     btn.disabled = true;
-    if (icon !== btn) {
-      icon.textContent = '↻';
-    }
-    btn.style.opacity = '.6';
+    document.getElementById('sync-panel').style.display = '';
+    document.getElementById('sync-panel-title').textContent = 'Iniciando sync...';
 
-    const url = '/api/sync-videos' + (force ? '?force=1' : '');
-    fetch(url, { method: 'POST' })
-      .then(r => {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
-      .then(data => {
-        showToast(
-          `Sincronizado: ${data.synced} novos · ${data.updated} atualizados · ${data.materials} materiais`,
-          'success', 5000
-        );
-        setTimeout(() => location.reload(), 1800);
-      })
+    fetch('/api/sync-videos' + (force ? '?force=1' : ''), { method: 'POST' })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); startPoll(); })
       .catch(err => {
-        showToast('Erro ao sincronizar: ' + err.message, 'error');
-      })
-      .finally(() => {
+        showToast('Erro ao iniciar sync: ' + err.message, 'error');
         btn.disabled = false;
-        if (icon !== btn) {
-          icon.textContent = '⟳';
-        }
-        btn.style.opacity = '';
-      });
+      })
+      .finally(() => { setTimeout(() => { btn.disabled = false; }, 3000); });
   }
 
   const btnSync = document.getElementById('btn-sync');
-  const btnSyncEmpty = document.getElementById('btn-sync-empty');
   const btnSyncForce = document.getElementById('btn-sync-force');
-  if (btnSync)      btnSync.addEventListener('click', (e) => { e.preventDefault(); doSync(btnSync, false); });
+  const btnSyncEmpty = document.getElementById('btn-sync-empty');
+  if (btnSync)      btnSync.addEventListener('click', () => doSync(btnSync, false));
+  if (btnSyncForce) btnSyncForce.addEventListener('click', (e) => { e.preventDefault(); doSync(btnSync, true); });
   if (btnSyncEmpty) btnSyncEmpty.addEventListener('click', () => doSync(btnSyncEmpty, false));
-  if (btnSyncForce) btnSyncForce.addEventListener('click', (e) => { e.preventDefault(); doSync(btnSyncForce, true); });
+
+  // Verifica se há sync rodando ao carregar a página
+  pollSyncStatus();
 })();
 </script>
 {% endblock %}

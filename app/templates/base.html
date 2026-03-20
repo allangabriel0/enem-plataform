@@ -35,6 +35,13 @@
        class="{% if request.url.path == '/schedule' %}active{% endif %}">
       <span class="nav-icon">📅</span> Cronograma
     </a>
+    <a href="/stats"
+       class="{% if request.url.path == '/stats' %}active{% endif %}">
+      <span class="nav-icon">📊</span> Estatísticas
+    </a>
+    <a href="/api/notes/export" download>
+      <span class="nav-icon">📝</span> Exportar notas
+    </a>
 
     {% if user is defined and user %}
     <span class="nav-section">Conta</span>

@@ -640,3 +640,5 @@ textarea { resize: vertical; min-height: 80px; }
 .gap-2 { gap: .75rem; }
 .flex-1 { flex: 1; }
 .hidden { display: none !important; }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

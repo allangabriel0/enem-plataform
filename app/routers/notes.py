@@ -120,6 +120,70 @@ def delete_note(db: Session, note_id: int, user_id: int) -> None:
 # Rotas
 # ---------------------------------------------------------------------------
 
+@router.get("/api/notes/export")
+async def export_notes(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Exporta todas as anotações do usuário como arquivo .txt para download.
+    Formato: agrupado por vídeo, com timestamps clicáveis.
+    """
+    from fastapi.responses import Response
+    from app.models import Video
+
+    notes = (
+        db.query(Note)
+        .filter_by(user_id=user.id)
+        .order_by(Note.video_id, Note.video_timestamp)
+        .all()
+    )
+
+    if not notes:
+        return Response(
+            content="Nenhuma anotação encontrada.",
+            media_type="text/plain; charset=utf-8",
+        )
+
+    # Agrupa por video_id
+    video_ids = list({n.video_id for n in notes})
+    videos = {v.id: v for v in db.query(Video).filter(Video.id.in_(video_ids)).all()}
+
+    def fmt(secs: float) -> str:
+        s = int(secs)
+        h, m, sec = s // 3600, (s % 3600) // 60, s % 60
+        return f"{h}:{m:02d}:{sec:02d}" if h else f"{m}:{sec:02d}"
+
+    lines = [
+        "ENEM Studies — Anotações",
+        f"Exportado em: {datetime.utcnow().strftime('%d/%m/%Y %H:%M')} UTC",
+        "=" * 60,
+        "",
+    ]
+
+    by_video: dict[int, list[Note]] = {}
+    for n in notes:
+        by_video.setdefault(n.video_id, []).append(n)
+
+    for vid_id, vid_notes in by_video.items():
+        video = videos.get(vid_id)
+        title = video.title if video else f"Vídeo {vid_id}"
+        lines.append(f"▶ {title}")
+        lines.append("-" * 50)
+        for n in vid_notes:
+            lines.append(f"  [{fmt(n.video_timestamp)}]  {n.content}")
+        lines.append("")
+
+    content = "\n".join(lines)
+    filename = f"anotacoes_enem_{datetime.utcnow().strftime('%Y%m%d')}.txt"
+
+    return Response(
+        content=content.encode("utf-8"),
+        media_type="text/plain; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
 @router.get("/api/notes/{video_id}", response_model=list[NoteOut])
 async def get_notes(
     video_id: int,

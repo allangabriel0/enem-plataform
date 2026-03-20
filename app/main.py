@@ -17,6 +17,7 @@ from app.routers import (
     player,
     progress,
     schedule,
+    stats,
     streaming,
     sync,
 )
@@ -109,3 +110,4 @@ app.include_router(materials.router)
 app.include_router(notes.router)
 app.include_router(progress.router)
 app.include_router(schedule.router)
+app.include_router(stats.router)

@@ -4,6 +4,7 @@ routers/sync.py — Sincronização da biblioteca com o Telegram.
 Endpoints:
   POST /api/sync-videos         — sync incremental (só mensagens novas)
   POST /api/sync-videos?force=1 — sync completo (re-varre tudo)
+  GET  /api/sync-status         — estado atual do sync (polling)
 
 Upsert de vídeos e materiais: identificados por (group_id, message_id).
 Sync incremental: guarda o maior message_id visto em SyncState e na próxima
@@ -11,6 +12,7 @@ execução usa min_id para pular mensagens já processadas.
 """
 import logging
 import os
+import time
 from datetime import datetime
 from typing import Optional
 
@@ -26,6 +28,22 @@ from app.utils.text import clean_title
 logger = logging.getLogger("enem")
 
 router = APIRouter()
+
+# Estado global do sync (só 1 sync por vez, 1 worker uvicorn)
+_sync_status: dict = {
+    "running": False,
+    "mode": "incremental",
+    "groups": [],          # [{"name": str, "added": int, "updated": int, "done": bool}]
+    "current_group": "",
+    "done_groups": 0,
+    "total_groups": 0,
+    "total_added": 0,
+    "total_updated": 0,
+    "total_materials": 0,
+    "started_at": None,
+    "elapsed": 0.0,
+    "error": None,
+}
 
 _MATERIAL_MIMES = {
     "application/pdf",
@@ -230,69 +248,101 @@ async def sync_videos(
             detail="Nenhum grupo Telegram configurado. Verifique TELEGRAM_GROUP_IDS no .env.",
         )
 
+    _sync_status.update({
+        "running": True,
+        "mode": "force" if force else "incremental",
+        "groups": [],
+        "current_group": "",
+        "done_groups": 0,
+        "total_groups": len(settings.TELEGRAM_GROUP_IDS),
+        "total_added": 0,
+        "total_updated": 0,
+        "total_materials": 0,
+        "started_at": time.time(),
+        "elapsed": 0.0,
+        "error": None,
+    })
+
     client = await get_telegram_client()
     total_stats = {"added": 0, "updated": 0, "materials": 0, "errors": 0}
 
-    for group_id in settings.TELEGRAM_GROUP_IDS:
-        state = _get_sync_state(db, group_id)
-        min_id = 0 if force else state.last_message_id
+    try:
+        for group_id in settings.TELEGRAM_GROUP_IDS:
+            state = _get_sync_state(db, group_id)
+            min_id = 0 if force else state.last_message_id
 
-        try:
-            entity = await client.get_entity(group_id)
-            group_name: str = getattr(entity, "title", str(group_id))
-        except Exception:
-            logger.error("sync: não foi possível obter grupo %s", group_id, exc_info=True)
-            total_stats["errors"] += 1
-            continue
+            try:
+                entity = await client.get_entity(group_id)
+                group_name: str = getattr(entity, "title", str(group_id))
+            except Exception:
+                logger.error("sync: não foi possível obter grupo %s", group_id, exc_info=True)
+                total_stats["errors"] += 1
+                continue
 
-        mode = "completo" if force else f"incremental (min_id={min_id})"
-        logger.info("Sincronizando grupo %s — modo %s", group_name, mode)
+            mode = "completo" if force else f"incremental (min_id={min_id})"
+            logger.info("Sincronizando grupo %s — modo %s", group_name, mode)
 
-        max_seen_id = min_id
-        v_added = v_updated = m_count = 0
+            _sync_status["current_group"] = group_name
+            group_entry = {"name": group_name, "added": 0, "updated": 0, "materials": 0, "done": False}
+            _sync_status["groups"].append(group_entry)
 
-        async for message in client.iter_messages(
-            entity,
-            limit=settings.TELEGRAM_FETCH_LIMIT,
-            min_id=min_id,
-        ):
-            if message.id > max_seen_id:
-                max_seen_id = message.id
+            max_seen_id = min_id
+            v_added = v_updated = m_count = 0
 
-            if _is_video_message(message):
-                try:
-                    added = _upsert_video(db, message, group_id, group_name)
-                    if added:
-                        v_added += 1
-                    else:
-                        v_updated += 1
-                except Exception:
-                    logger.error("sync: erro vídeo msg=%d grupo=%s", message.id, group_id, exc_info=True)
-                    total_stats["errors"] += 1
+            async for message in client.iter_messages(
+                entity,
+                limit=settings.TELEGRAM_FETCH_LIMIT,
+                min_id=min_id,
+            ):
+                if message.id > max_seen_id:
+                    max_seen_id = message.id
 
-            elif _is_material_message(message):
-                try:
-                    _upsert_material(db, message, group_id, group_name)
-                    m_count += 1
-                except Exception:
-                    logger.error("sync: erro material msg=%d grupo=%s", message.id, group_id, exc_info=True)
-                    total_stats["errors"] += 1
+                if _is_video_message(message):
+                    try:
+                        added = _upsert_video(db, message, group_id, group_name)
+                        if added:
+                            v_added += 1
+                        else:
+                            v_updated += 1
+                    except Exception:
+                        logger.error("sync: erro vídeo msg=%d grupo=%s", message.id, group_id, exc_info=True)
+                        total_stats["errors"] += 1
 
-        # Atualiza SyncState
-        if max_seen_id > state.last_message_id:
-            state.last_message_id = max_seen_id
-        state.last_sync_at = datetime.utcnow()
-        state.videos_total += v_added
-        db.commit()
+                elif _is_material_message(message):
+                    try:
+                        _upsert_material(db, message, group_id, group_name)
+                        m_count += 1
+                    except Exception:
+                        logger.error("sync: erro material msg=%d grupo=%s", message.id, group_id, exc_info=True)
+                        total_stats["errors"] += 1
 
-        total_stats["added"] += v_added
-        total_stats["updated"] += v_updated
-        total_stats["materials"] += m_count
+            # Atualiza SyncState
+            if max_seen_id > state.last_message_id:
+                state.last_message_id = max_seen_id
+            state.last_sync_at = datetime.utcnow()
+            state.videos_total += v_added
+            db.commit()
 
-        logger.info(
-            "Grupo %s: +%d vídeos, ~%d atualizados, %d materiais. max_id=%d",
-            group_name, v_added, v_updated, m_count, max_seen_id,
-        )
+            group_entry["added"] = v_added
+            group_entry["updated"] = v_updated
+            group_entry["materials"] = m_count
+            group_entry["done"] = True
+            _sync_status["done_groups"] += 1
+            _sync_status["total_added"] += v_added
+            _sync_status["total_updated"] += v_updated
+            _sync_status["total_materials"] += m_count
+
+            total_stats["added"] += v_added
+            total_stats["updated"] += v_updated
+            total_stats["materials"] += m_count
+
+            logger.info(
+                "Grupo %s: +%d vídeos, ~%d atualizados, %d materiais. max_id=%d",
+                group_name, v_added, v_updated, m_count, max_seen_id,
+            )
+    finally:
+        _sync_status["running"] = False
+        _sync_status["elapsed"] = round(time.time() - (_sync_status["started_at"] or time.time()), 1)
 
     logger.info(
         "Sync concluído: %d novos, %d atualizados, %d materiais, %d erros",
@@ -308,3 +358,12 @@ async def sync_videos(
         "errors": total_stats["errors"],
         "mode": "force" if force else "incremental",
     }
+
+
+@router.get("/api/sync-status")
+async def sync_status(_: User = Depends(get_current_user)):
+    """Retorna o estado atual do sync (usado para polling no frontend)."""
+    s = dict(_sync_status)
+    if s["started_at"]:
+        s["elapsed"] = round(time.time() - s["started_at"], 1)
+    return s
