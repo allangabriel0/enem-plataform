@@ -277,24 +277,30 @@ textarea { resize: vertical; min-height: 80px; }
 /* -----------------------------------------------------------------------
    10. Lista de vídeos (dashboard e sidebar do player)
    ----------------------------------------------------------------------- */
-.video-list { display: flex; flex-direction: column; gap: .3rem; }
+.video-list { display: flex; flex-direction: column; gap: .15rem; }
 
 .video-item {
   display: flex;
   align-items: center;
   gap: .6rem;
-  padding: .45rem .65rem;
+  padding: .5rem .7rem;
   border-radius: var(--radius);
-  font-size: .875rem;
+  font-size: .865rem;
   color: var(--text-muted);
-  transition: background .12s;
+  transition: background .1s, color .1s;
+  border: 1px solid transparent;
 }
-.video-item:hover { background: var(--surface-2); }
+.video-item:hover {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--border);
+  text-decoration: none;
+}
 .video-item.current { background: var(--surface-2); color: var(--text); font-weight: 500; }
 
 .video-item__status {
-  font-size: .85rem;
-  min-width: 1rem;
+  font-size: .8rem;
+  min-width: 1.1rem;
   text-align: center;
   flex-shrink: 0;
 }
@@ -326,24 +332,31 @@ textarea { resize: vertical; min-height: 80px; }
 /* -----------------------------------------------------------------------
    12. Seções do dashboard (canal → curso → seção)
    ----------------------------------------------------------------------- */
-.course-group { margin-bottom: 2.25rem; }
+.course-group { margin-bottom: 2.5rem; }
 .course-group__header {
   display: flex;
   align-items: center;
-  gap: .65rem;
-  margin-bottom: .85rem;
-  padding: .5rem 0 .5rem .75rem;
-  border-left: 3px solid var(--primary);
-  border-bottom: 1px solid var(--border);
+  gap: .75rem;
+  margin-bottom: 1rem;
+  padding: .65rem 1rem;
+  background: linear-gradient(135deg, rgba(99,102,241,.1) 0%, rgba(99,102,241,.03) 100%);
+  border: 1px solid rgba(99,102,241,.2);
+  border-left: 4px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
 }
-.course-group__title { font-size: 1.1rem; color: var(--text); font-weight: 700; }
+.course-group__title {
+  font-size: 1.05rem; color: var(--text); font-weight: 700;
+  letter-spacing: .01em;
+}
 .course-group__badge {
   font-size: .72rem;
-  background: rgba(99,102,241,.15);
-  border: 1px solid rgba(99,102,241,.3);
+  background: rgba(99,102,241,.2);
+  border: 1px solid rgba(99,102,241,.35);
   border-radius: 99px;
-  padding: .15rem .6rem;
+  padding: .2rem .65rem;
   color: var(--primary-h);
+  font-weight: 600;
+  margin-left: auto;
 }
 
 .section-block { margin-bottom: 1.25rem; }
@@ -351,21 +364,29 @@ textarea { resize: vertical; min-height: 80px; }
   display: flex;
   align-items: center;
   gap: .55rem;
-  margin-bottom: .45rem;
-  padding: .35rem .6rem;
+  margin-bottom: .5rem;
+  padding: .4rem .7rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   cursor: pointer;
   user-select: none;
-  transition: background .12s;
+  transition: background .12s, border-color .12s;
 }
-.section-block__header:hover { background: var(--surface-2); }
+.section-block__header:hover {
+  background: var(--surface-2);
+  border-color: var(--primary);
+}
 .section-block__title {
-  font-size: .875rem;
+  font-size: .85rem;
   font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: .01em;
+  color: var(--text);
 }
-.section-block__progress { font-size: .75rem; color: var(--text-dim); margin-left: auto; }
+.section-block__progress {
+  font-size: .72rem; color: var(--text-dim); margin-left: auto;
+  background: var(--surface-2); border-radius: 99px;
+  padding: .1rem .45rem; border: 1px solid var(--border);
+}
 
 /* -----------------------------------------------------------------------
    13. Player
@@ -382,10 +403,15 @@ textarea { resize: vertical; min-height: 80px; }
   border-radius: var(--radius);
   overflow: hidden;
   position: relative;
-}
-.player-video-wrap video {
+  aspect-ratio: 16 / 9;
   width: 100%;
-  display: block;
+}
+.player-video-wrap video,
+.player-video-wrap .video-js {
+  position: absolute !important;
+  top: 0; left: 0;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .player-meta { margin-top: .85rem; }
@@ -410,10 +436,12 @@ textarea { resize: vertical; min-height: 80px; }
   top: 1rem;
 }
 .player-sidebar__header {
-  padding: .75rem 1rem;
+  padding: .85rem 1rem;
   border-bottom: 1px solid var(--border);
-  font-size: .85rem;
-  font-weight: 600;
+  font-size: .88rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, rgba(99,102,241,.12) 0%, transparent 100%);
+  color: var(--text);
 }
 
 /* -----------------------------------------------------------------------

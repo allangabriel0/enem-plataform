@@ -24,27 +24,55 @@
 
 .note-form textarea { min-height: 64px; }
 
-/* Sidebar do player — seção atual destacada */
-.plist-item { display:flex; align-items:flex-start; gap:.5rem;
-              padding:.4rem .75rem; border-radius:4px; font-size:.82rem;
-              color:var(--text-muted); cursor:pointer; transition:background .12s; }
-.plist-item:hover { background:var(--surface-2); color:var(--text); }
-.plist-item.active { background:rgba(99,102,241,.18); color:var(--text); font-weight:600;
-                     border-left:2px solid var(--primary); padding-left:calc(.75rem - 2px); }
-.plist-item__icon { flex-shrink:0; width:1.1rem; text-align:center; font-size:.82rem; margin-top:.08rem;
-                    color:var(--primary-h); }
-.plist-item__title { flex:1; line-height:1.35; }
-.plist-item__dur { flex-shrink:0; font-size:.7rem; color:var(--text-dim); align-self:flex-start; margin-top:.1rem; }
+/* ── Sidebar do player ── */
 
-.section-hdr { display:flex; align-items:center; gap:.5rem;
-               padding:.5rem .75rem .3rem; cursor:pointer; user-select:none;
-               border-top:1px solid var(--border); margin-top:.25rem;
-               transition:background .12s; }
-.section-hdr:first-child { border-top:none; margin-top:0; }
-.section-hdr:hover { background:var(--surface-2); }
-.section-hdr h4 { font-size:.75rem; font-weight:600; letter-spacing:.05em;
-                  color:var(--text-muted); margin:0; flex:1; }
-.section-hdr .s-progress { font-size:.7rem; color:var(--text-dim); flex-shrink:0; }
+/* Cabeçalho de seção: fundo escuro, texto branco, parece accordion */
+.section-hdr {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .6rem .85rem;
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
+  cursor: pointer; user-select: none;
+  transition: background .12s;
+}
+.section-hdr:first-child { border-top: none; }
+.section-hdr:hover { background: #2d3d52; }
+.section-hdr h4 {
+  font-size: .78rem; font-weight: 700;
+  color: var(--text);
+  margin: 0; flex: 1; line-height: 1.35;
+  letter-spacing: .01em;
+}
+.section-hdr .s-progress {
+  font-size: .67rem; color: var(--text-dim); flex-shrink: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 99px; padding: .1rem .45rem;
+}
+
+/* Item de vídeo na playlist */
+.plist-item {
+  display: flex; align-items: flex-start; gap: .5rem;
+  padding: .45rem .85rem;
+  font-size: .82rem; color: var(--text-muted);
+  cursor: pointer; transition: background .1s;
+  border-bottom: 1px solid rgba(255,255,255,.03);
+}
+.plist-item:hover { background: rgba(255,255,255,.04); color: var(--text); }
+.plist-item.active {
+  background: rgba(99,102,241,.18); color: var(--text); font-weight: 600;
+  border-left: 3px solid var(--primary); padding-left: calc(.85rem - 3px);
+}
+.plist-item__icon {
+  flex-shrink: 0; width: 1rem; text-align: center;
+  font-size: .8rem; margin-top: .1rem; color: var(--primary-h);
+}
+.plist-item.active .plist-item__icon { color: var(--primary-h); }
+.plist-item__title { flex: 1; line-height: 1.4; }
+.plist-item__dur {
+  flex-shrink: 0; font-size: .68rem; color: var(--text-dim);
+  align-self: flex-start; margin-top: .15rem;
+  background: var(--surface-2); border-radius: 3px; padding: .05rem .3rem;
+}
 
 .note-row { display:flex; gap:.55rem; padding:.5rem 0;
             border-bottom:1px solid var(--border); font-size:.85rem; }
@@ -332,7 +360,8 @@ const RESUME_AT  = parseFloat('{{ progress.current_time | round(1) if progress e
    1. Video.js init
    ------------------------------------------------------------------ */
 const player = videojs('enem-player', {
-  fluid: true,
+  fill: true,
+  aspectRatio: '16:9',
   playbackRates: [0.75, 1, 1.25, 1.5, 1.75, 2],
   userActions: { hotkeys: true },
 });
