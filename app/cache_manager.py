@@ -26,11 +26,18 @@ class CacheManager:
     """Gerencia cache de vídeos em dois diretórios com evicção LRU."""
 
     def __init__(self, primary_dir: Path, fallback_dir: Path, max_gb: float) -> None:
-        self._primary = primary_dir
         self._fallback = fallback_dir
         self._max_bytes = int(max_gb * 1024 ** 3)
-        self._primary.mkdir(parents=True, exist_ok=True)
         self._fallback.mkdir(parents=True, exist_ok=True)
+        try:
+            primary_dir.mkdir(parents=True, exist_ok=True)
+            self._primary = primary_dir
+        except (PermissionError, OSError) as e:
+            logger.warning(
+                "Cache primário inacessível (%s: %s), usando fallback: %s",
+                primary_dir, e, fallback_dir,
+            )
+            self._primary = fallback_dir
 
     # ------------------------------------------------------------------
     # Public API
