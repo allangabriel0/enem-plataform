@@ -353,9 +353,11 @@
 /* Sincronização com Telegram */
 (function () {
   let pollInterval = null;
+  let weStartedPolling = false;  // só mostra toast/reload se FOI esta sessão que iniciou
 
   function startPoll() {
     if (pollInterval) return;
+    weStartedPolling = true;
     pollInterval = setInterval(pollSyncStatus, 1500);
   }
 
@@ -369,12 +371,12 @@
       if (!r.ok) return;
       const s = await r.json();
       updatePanel(s);
-      if (!s.running) {
+      if (!s.running && weStartedPolling) {
         stopPoll();
-        if (s.total_added !== undefined) {
-          showToast(`Sync: +${s.total_added} novos · ~${s.total_updated} atualizados · ${s.total_materials} materiais (${s.elapsed}s)`, 'success', 6000);
-          setTimeout(() => location.reload(), 2000);
-        }
+        showToast(`Sync: +${s.total_added} novos · ~${s.total_updated} atualizados · ${s.total_materials} materiais (${s.elapsed}s)`, 'success', 6000);
+        setTimeout(() => location.reload(), 2000);
+      } else if (!s.running) {
+        stopPoll();  // sync não está rodando ao carregar, apenas para o interval
       }
     } catch {}
   }
