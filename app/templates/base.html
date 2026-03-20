@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ENEM Studies{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- Toggle mobile -->
+<button id="sidebar-toggle" class="sidebar-toggle" aria-label="Menu">☰</button>
+
+<!-- ===================================================================
+     Sidebar
+     =================================================================== -->
+<aside id="sidebar" class="sidebar" role="navigation" aria-label="Navegação principal">
+
+  <div class="sidebar__logo">
+    <a href="/">ENEM Studies</a>
+    <small>Plataforma de estudos</small>
+  </div>
+
+  <nav class="sidebar__nav">
+    <span class="nav-section">Principal</span>
+    <a href="/"
+       class="{% if request.url.path == '/' %}active{% endif %}">
+      <span class="nav-icon">🏠</span> Dashboard
+    </a>
+    <a href="/schedule"
+       class="{% if request.url.path == '/schedule' %}active{% endif %}">
+      <span class="nav-icon">📅</span> Cronograma
+    </a>
+
+    {% if user is defined and user %}
+    <span class="nav-section">Conta</span>
+    <a href="/logout">
+      <span class="nav-icon">🚪</span> Sair
+    </a>
+    {% endif %}
+  </nav>
+
+  {% if user is defined and user %}
+  <div class="sidebar__footer">
+    <div class="sidebar__user">
+      <strong>{{ user.name }}</strong>
+      {{ user.email }}
+    </div>
+    <a href="/logout" class="btn btn-ghost btn-sm" style="width:100%">Sair</a>
+  </div>
+  {% endif %}
+
+</aside>
+
+<!-- ===================================================================
+     Conteúdo principal
+     =================================================================== -->
+<div class="app-layout">
+  <main class="main-content" role="main">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script src="/static/js/app.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

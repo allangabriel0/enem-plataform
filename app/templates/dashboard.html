@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — ENEM Studies{% endblock %}
+
+{# -----------------------------------------------------------------------
+   Macro: barra de progresso com label
+   ----------------------------------------------------------------------- #}
+{% macro progress_bar(done, total, extra_class='') %}
+  {% set pct = (done / total * 100) | round | int if total > 0 else 0 %}
+  <div class="progress-bar{{ ' ' ~ extra_class if extra_class }}">
+    <div class="progress-bar__fill{% if pct == 100 %} progress-bar__fill--done{% endif %}"
+         style="width:{{ pct }}%"></div>
+  </div>
+  <span class="progress-label">{{ done }}/{{ total }}</span>
+{% endmacro %}
+
+{% block content %}
+
+<!-- =====================================================================
+     Cabeçalho
+     ===================================================================== -->
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <button id="btn-sync" class="btn btn-ghost btn-sm">
+    <span id="sync-icon">⟳</span> Sincronizar Telegram
+  </button>
+</div>
+
+<!-- =====================================================================
+     Stats bar
+     ===================================================================== -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-card__value">{{ stats.total }}</div>
+    <div class="stat-card__label">Vídeos</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__value" style="color:var(--success)">{{ stats.completed }}</div>
+    <div class="stat-card__label">Concluídos</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__value" style="color:var(--warning)">{{ stats.in_progress }}</div>
+    <div class="stat-card__label">Em andamento</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__value" style="color:var(--primary-h)">{{ stats.materials }}</div>
+    <div class="stat-card__label">Materiais</div>
+  </div>
+</div>
+
+<!-- =====================================================================
+     Continue Assistindo
+     ===================================================================== -->
+{% if continue_videos %}
+<section class="mb-3">
+  <h2 class="mb-2">Continuar assistindo</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.65rem">
+    {% for video in continue_videos %}
+      {% set prog = progress_map.get(video.id) %}
+      {% set pct  = ((prog.current_time / prog.duration * 100) | round | int) if prog and prog.duration else 0 %}
+      <a href="/watch/{{ video.id }}" class="card" style="display:block;text-decoration:none">
+        <div class="text-sm" style="color:var(--text-muted);margin-bottom:.2rem">
+          {{ video.subject or video.telegram_group_name }}
+        </div>
+        <div style="font-weight:600;font-size:.9rem;margin-bottom:.5rem;
+                    white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+          {{ video.title }}
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar__fill" style="width:{{ pct }}%"></div>
+        </div>
+        <span class="progress-label">{{ pct }}%</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- =====================================================================
+     Barra de filtros
+     ===================================================================== -->
+<form method="get" action="/" class="filter-bar mb-3">
+  <select name="group" onchange="this.form.submit()">
+    <option value="">Todos os grupos</option>
+    {% for g in groups %}
+      <option value="{{ g }}"{% if filters.group == g %} selected{% endif %}>{{ g }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="subject" onchange="this.form.submit()">
+    <option value="">Todas as matérias</option>
+    {% for s in subjects %}
+      <option value="{{ s }}"{% if filters.subject == s %} selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+
+  <input type="search" name="search" value="{{ filters.search }}"
+         placeholder="Buscar vídeo..." style="flex:2">
+
+  <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
+
+  {% if filters.group or filters.subject or filters.search %}
+    <a href="/" class="btn btn-ghost btn-sm">✕ Limpar</a>
+  {% endif %}
+</form>
+
+<!-- =====================================================================
+     Layout principal: TOC + Vídeos
+     ===================================================================== -->
+{% if grouped_videos %}
+<div style="display:grid;grid-template-columns:260px 1fr;gap:1.5rem;align-items:start">
+
+  <!-- -------------------------------------------------------------------
+       TOC lateral (sticky)
+       ------------------------------------------------------------------- -->
+  <aside style="position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow-y:auto">
+    <div class="card" style="padding:.75rem .85rem">
+      <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;
+                  color:var(--text-dim);margin-bottom:.6rem">Índice de conteúdo</div>
+
+      {% for canal, cursos in grouped_videos.items() %}
+        <div style="margin-bottom:.65rem">
+          <a href="#canal-{{ loop.index }}"
+             style="font-size:.85rem;font-weight:600;color:var(--text);text-decoration:none">
+            {{ canal }}
+          </a>
+
+          {% for curso, secoes in cursos.items() %}
+            {% set cp = course_progress[canal][curso] %}
+            {% set cp_pct = (cp[0] / cp[1] * 100) | round | int if cp[1] > 0 else 0 %}
+            <div style="margin:.3rem 0 .3rem .65rem">
+              <a href="#curso-{{ canal | replace(' ','_') }}-{{ loop.index }}"
+                 style="font-size:.8rem;color:var(--text-muted);text-decoration:none;
+                        display:flex;align-items:center;justify-content:space-between;gap:.4rem">
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">
+                  {{ curso }}
+                </span>
+                <span class="text-xs" style="color:var(--text-dim);flex-shrink:0">
+                  {{ cp[0] }}/{{ cp[1] }}
+                </span>
+              </a>
+              <div class="progress-bar" style="height:3px;margin-top:.2rem">
+                <div class="progress-bar__fill{% if cp_pct==100 %} progress-bar__fill--done{% endif %}"
+                     style="width:{{ cp_pct }}%"></div>
+              </div>
+
+              {% for secao, vids in secoes.items() %}
+                {% set lp = lesson_progress[canal][curso][secao] %}
+                {% set lp_pct = (lp[0] / lp[1] * 100) | round | int if lp[1] > 0 else 0 %}
+                <div style="margin:.2rem 0 .2rem 1rem">
+                  <a href="#secao-{{ canal | replace(' ','_') }}-{{ loop.index }}"
+                     style="font-size:.75rem;color:var(--text-dim);text-decoration:none">
+                    {{ secao }}
+                    <span style="float:right">{{ lp[0] }}/{{ lp[1] }}</span>
+                  </a>
+                </div>
+              {% endfor %}
+
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      {% if materials_by_group %}
+        <div style="margin-top:.65rem;border-top:1px solid var(--border);padding-top:.65rem">
+          <a href="#materiais"
+             style="font-size:.85rem;font-weight:600;color:var(--text);text-decoration:none">
+            Materiais
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </aside>
+
+  <!-- -------------------------------------------------------------------
+       Vídeos agrupados
+       ------------------------------------------------------------------- -->
+  <div>
+    {% for canal, cursos in grouped_videos.items() %}
+    <div id="canal-{{ loop.index }}" class="course-group">
+
+      <div class="course-group__header">
+        <h2 class="course-group__title">{{ canal }}</h2>
+        {% set total_canal = namespace(done=0, total=0) %}
+        {% for curso, secoes in cursos.items() %}
+          {% set cp = course_progress[canal][curso] %}
+          {% set total_canal.done  = total_canal.done  + cp[0] %}
+          {% set total_canal.total = total_canal.total + cp[1] %}
+        {% endfor %}
+        <span class="course-group__badge">
+          {{ total_canal.done }}/{{ total_canal.total }}
+        </span>
+      </div>
+
+      {% for curso, secoes in cursos.items() %}
+        {% set cp = course_progress[canal][curso] %}
+        {% set cp_pct = (cp[0] / cp[1] * 100) | round | int if cp[1] > 0 else 0 %}
+        {% set curso_anchor = "curso-" ~ (canal | replace(' ','_')) ~ "-" ~ loop.index %}
+
+        <div id="{{ curso_anchor }}" style="margin-bottom:1.5rem">
+          <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.4rem">
+            <h3 style="font-size:.95rem;color:var(--text)">{{ curso }}</h3>
+            <span class="text-xs text-dim">{{ cp[0] }}/{{ cp[1] }} concluídos</span>
+          </div>
+          {{ progress_bar(cp[0], cp[1]) }}
+
+          {% for secao, videos in secoes.items() %}
+            {% set lp = lesson_progress[canal][curso][secao] %}
+            {% set lp_pct = (lp[0] / lp[1] * 100) | round | int if lp[1] > 0 else 0 %}
+            {% set secao_anchor = "secao-" ~ (canal | replace(' ','_')) ~ "-" ~ loop.index %}
+
+            <div id="{{ secao_anchor }}" class="section-block mt-2">
+
+              <div class="section-block__header" role="button"
+                   aria-expanded="true" tabindex="0">
+                <h4 class="section-block__title">{{ secao }}</h4>
+                <div class="progress-bar" style="flex:1;max-width:100px;height:3px">
+                  <div class="progress-bar__fill{% if lp_pct==100 %} progress-bar__fill--done{% endif %}"
+                       style="width:{{ lp_pct }}%"></div>
+                </div>
+                <span class="section-block__progress">{{ lp[0] }}/{{ lp[1] }}</span>
+              </div>
+
+              <ul class="video-list">
+                {% for video in videos %}
+                  {% set prog = progress_map.get(video.id) %}
+                  {% if prog and prog.completed %}
+                    {% set status_icon = "✓" %}
+                    {% set status_color = "var(--success)" %}
+                  {% elif prog and prog.current_time > 0 %}
+                    {% set status_icon = "▶" %}
+                    {% set status_color = "var(--warning)" %}
+                  {% else %}
+                    {% set status_icon = "○" %}
+                    {% set status_color = "var(--text-dim)" %}
+                  {% endif %}
+
+                  <li>
+                    <a href="/watch/{{ video.id }}" class="video-item">
+                      <span class="video-item__status" style="color:{{ status_color }}">
+                        {{ status_icon }}
+                      </span>
+                      <span class="video-item__title">{{ video.title }}</span>
+                      {% if video.duration %}
+                        <span class="text-xs text-dim" style="flex-shrink:0">
+                          {{ (video.duration // 60) }}min
+                        </span>
+                      {% endif %}
+                    </a>
+                    {% if prog and prog.current_time > 0 and not prog.completed %}
+                      {% set v_pct = (prog.current_time / prog.duration * 100) | round | int if prog.duration else 0 %}
+                      <div class="progress-bar" style="height:2px;margin:0 .65rem .2rem">
+                        <div class="progress-bar__fill" style="width:{{ v_pct }}%"></div>
+                      </div>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+
+    <!-- -----------------------------------------------------------------
+         Materiais
+         ----------------------------------------------------------------- -->
+    {% if materials_by_group %}
+    <div id="materiais" class="course-group">
+      <div class="course-group__header">
+        <h2 class="course-group__title">Materiais de estudo</h2>
+      </div>
+      {% for grupo, mats in materials_by_group.items() %}
+        <div style="margin-bottom:1rem">
+          <h3 style="font-size:.9rem;color:var(--text-muted);margin-bottom:.4rem">{{ grupo }}</h3>
+          <ul class="video-list">
+            {% for m in mats %}
+              <li>
+                <a href="/download/material/{{ m.id }}" class="video-item">
+                  <span class="video-item__status text-dim">
+                    {% if m.file_ext == '.pdf' %}📄
+                    {% elif m.file_ext in ['.zip', '.rar', '.7z'] %}📦
+                    {% else %}📎{% endif %}
+                  </span>
+                  <span class="video-item__title">{{ m.title }}</span>
+                  {% if m.file_ext %}
+                    <span class="tag">{{ m.file_ext }}</span>
+                  {% endif %}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+  </div>{# fim coluna vídeos #}
+</div>{# fim grid TOC + vídeos #}
+
+{% else %}
+  <!-- Banco vazio ou sem resultados -->
+  <div class="card" style="text-align:center;padding:2.5rem 1rem">
+    {% if filters.group or filters.subject or filters.search %}
+      <p style="color:var(--text-muted)">Nenhum vídeo encontrado para os filtros aplicados.</p>
+      <a href="/" class="btn btn-ghost btn-sm mt-2">Limpar filtros</a>
+    {% else %}
+      <p style="color:var(--text-muted);margin-bottom:.75rem">
+        Nenhum vídeo na biblioteca ainda.
+      </p>
+      <button id="btn-sync-empty" class="btn btn-primary btn-sm">
+        ⟳ Sincronizar com Telegram
+      </button>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* Sincronização com Telegram */
+(function () {
+  function doSync(btn) {
+    if (!btn) return;
+    const icon = btn.querySelector('#sync-icon') || btn;
+    btn.disabled = true;
+    icon.textContent = '↻';
+    btn.style.opacity = '.6';
+
+    fetch('/api/sync-videos', { method: 'POST' })
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(data => {
+        showToast(
+          `Sincronizado: ${data.synced} novos · ${data.updated} atualizados · ${data.materials} materiais`,
+          'success', 5000
+        );
+        setTimeout(() => location.reload(), 1800);
+      })
+      .catch(err => {
+        showToast('Erro ao sincronizar: ' + err.message, 'error');
+      })
+      .finally(() => {
+        btn.disabled = false;
+        icon.textContent = '⟳';
+        btn.style.opacity = '';
+      });
+  }
+
+  const btnSync = document.getElementById('btn-sync');
+  const btnSyncEmpty = document.getElementById('btn-sync-empty');
+  if (btnSync)      btnSync.addEventListener('click', () => doSync(btnSync));
+  if (btnSyncEmpty) btnSyncEmpty.addEventListener('click', () => doSync(btnSyncEmpty));
+})();
+</script>
+{% endblock %}

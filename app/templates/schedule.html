@@ -1,0 +1,575 @@
+{% extends "base.html" %}
+
+{% block title %}Cronograma — ENEM Studies{% endblock %}
+
+{% block head %}
+<style>
+/* ---- Calendário ---- */
+.cal-wrap   { overflow-x: auto; }
+.cal-grid   { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; min-width: 560px; }
+.cal-header { text-align: center; font-size: .72rem; text-transform: uppercase;
+              letter-spacing: .06em; color: var(--text-dim);
+              padding: .35rem 0; font-weight: 600; }
+.cal-cell   { min-height: 90px; background: var(--surface);
+              border: 1px solid var(--border); border-radius: 4px;
+              padding: .35rem .4rem; cursor: pointer; transition: background .12s; }
+.cal-cell:hover         { background: var(--surface-2); }
+.cal-cell.other-month   { opacity: .32; pointer-events: none; }
+.cal-cell.today         { border-color: var(--primary); }
+.cal-cell.has-items     { cursor: pointer; }
+
+.cal-day-num { font-size: .75rem; color: var(--text-muted); font-weight: 600;
+               margin-bottom: .25rem; display: flex; align-items: center; gap: .3rem; }
+.cal-day-num .today-dot { width: 18px; height: 18px; border-radius: 50%;
+                           background: var(--primary); color: #fff;
+                           font-size: .7rem; display: flex; align-items: center;
+                           justify-content: center; font-weight: 700; }
+
+.cal-chip { display: block; border-radius: 3px; font-size: .68rem; line-height: 1.3;
+            padding: .12rem .35rem; margin-bottom: .15rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            color: #fff; cursor: pointer; }
+.cal-chip.done    { opacity: .55; text-decoration: line-through; }
+.cal-chip.skipped { opacity: .35; text-decoration: line-through; }
+.cal-more { font-size: .65rem; color: var(--text-dim); margin-top: .1rem; }
+
+/* ---- Modal ---- */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6);
+                 z-index: 400; display: flex; align-items: center;
+                 justify-content: center; padding: 1rem; }
+.modal-overlay.hidden { display: none; }
+.modal-box      { background: var(--surface); border: 1px solid var(--border);
+                  border-radius: 8px; padding: 1.5rem; width: 100%;
+                  max-width: 460px; max-height: 90vh; overflow-y: auto;
+                  box-shadow: 0 8px 32px rgba(0,0,0,.5); }
+.modal-header   { display: flex; align-items: center; margin-bottom: 1.1rem; }
+.modal-title    { flex: 1; font-size: 1rem; font-weight: 600; }
+.modal-close    { background: none; border: none; color: var(--text-muted);
+                  cursor: pointer; font-size: 1.2rem; padding: .2rem .4rem;
+                  border-radius: 4px; }
+.modal-close:hover { color: var(--text); background: var(--surface-2); }
+
+/* ---- Lista de itens ---- */
+.sched-list     { display: flex; flex-direction: column; gap: .5rem; }
+.sched-item     { display: flex; gap: .75rem; align-items: flex-start;
+                  padding: .7rem .85rem; border-radius: 6px;
+                  background: var(--surface); border: 1px solid var(--border);
+                  border-left: 4px solid; }
+.sched-item.done    { opacity: .6; }
+.sched-item.skipped { opacity: .4; }
+.sched-item__time   { font-size: .78rem; font-family: monospace; color: var(--text-dim);
+                      flex-shrink: 0; padding-top: .1rem; min-width: 3rem; }
+.sched-item__body   { flex: 1; min-width: 0; }
+.sched-item__subj   { font-size: .72rem; text-transform: uppercase;
+                      letter-spacing: .05em; color: var(--text-dim); }
+.sched-item__topic  { font-weight: 600; font-size: .9rem; margin: .1rem 0; }
+.sched-item__desc   { font-size: .8rem; color: var(--text-muted); margin-top: .2rem; }
+.sched-item__actions { display: flex; gap: .4rem; flex-shrink: 0; }
+
+.status-pill { font-size: .68rem; padding: .15rem .5rem; border-radius: 99px;
+               font-weight: 500; flex-shrink: 0; align-self: flex-start; margin-top: .15rem; }
+.status-pill.pending  { background: rgba(245,158,11,.18); color: #fcd34d; border: 1px solid rgba(245,158,11,.3); }
+.status-pill.done     { background: rgba(34,197,94,.15); color: #86efac;   border: 1px solid rgba(34,197,94,.3); }
+.status-pill.skipped  { background: rgba(100,116,139,.15); color: var(--text-dim); border: 1px solid var(--border); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ====================================================================
+     Cabeçalho + navegação de mês
+     ==================================================================== -->
+<div class="page-header">
+  <h1>Cronograma</h1>
+  <button class="btn btn-primary btn-sm" onclick="openModal()">+ Novo item</button>
+</div>
+
+<!-- Navegação de mês -->
+<div style="display:flex;align-items:center;gap:.65rem;margin-bottom:1rem;flex-wrap:wrap">
+  <a id="link-prev" href="#" class="btn btn-ghost btn-sm">‹ Anterior</a>
+  <h2 id="month-label" style="font-size:1rem;font-weight:600;flex:1;text-align:center"></h2>
+  <a id="link-next" href="#" class="btn btn-ghost btn-sm">Próximo ›</a>
+
+  <form method="get" action="/schedule" style="display:flex;gap:.4rem;align-items:center">
+    <input type="month" name="month" id="month-picker"
+           value="{{ month or '' }}"
+           style="background:var(--surface-2);border:1px solid var(--border);
+                  border-radius:var(--radius);color:var(--text);padding:.35rem .6rem;
+                  font:inherit;cursor:pointer">
+    <button type="submit" class="btn btn-ghost btn-sm">Ir</button>
+  </form>
+</div>
+
+<!-- ====================================================================
+     Calendário
+     ==================================================================== -->
+<div class="card mb-3" style="padding:.75rem">
+  <div class="cal-wrap">
+    <div class="cal-grid" id="cal-headers"></div>
+    <div class="cal-grid" id="cal-body"></div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     Lista cronológica
+     ==================================================================== -->
+<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.65rem">
+  <h3 style="font-size:.95rem;font-weight:600">Itens do mês</h3>
+  <div style="flex:1"></div>
+  <select id="filter-status" class="btn btn-ghost btn-sm"
+          style="padding:.3rem .65rem;font-size:.8rem;cursor:pointer"
+          onchange="renderList()">
+    <option value="">Todos os status</option>
+    <option value="pending">Pendentes</option>
+    <option value="done">Concluídos</option>
+    <option value="skipped">Ignorados</option>
+  </select>
+</div>
+
+<div id="sched-list" class="sched-list"></div>
+
+<div id="empty-msg" class="hidden"
+     style="text-align:center;padding:2rem;color:var(--text-dim)">
+  Nenhum item para este mês.
+</div>
+
+<!-- ====================================================================
+     Modal criar/editar
+     ==================================================================== -->
+<div id="modal-overlay" class="modal-overlay hidden" role="dialog"
+     aria-modal="true" aria-labelledby="modal-title-text">
+
+  <div class="modal-box">
+    <div class="modal-header">
+      <span id="modal-title-text" class="modal-title">Novo item</span>
+      <button class="modal-close" onclick="closeModal()" aria-label="Fechar">✕</button>
+    </div>
+
+    <form id="modal-form" onsubmit="submitItem(event)">
+      <input type="hidden" id="edit-id" value="">
+
+      <div class="form-group">
+        <label for="f-subject">Matéria</label>
+        <input id="f-subject" name="subject" list="subjects-list"
+               placeholder="Ex: Matemática" required autocomplete="off">
+        <datalist id="subjects-list">
+          <option value="Matemática"><option value="Física"><option value="Química">
+          <option value="Biologia"><option value="História"><option value="Geografia">
+          <option value="Português"><option value="Redação"><option value="Literatura">
+          <option value="Filosofia"><option value="Sociologia"><option value="Inglês">
+          <option value="Espanhol"><option value="Artes"><option value="ENEM">
+        </datalist>
+      </div>
+
+      <div class="form-group">
+        <label for="f-topic">Tópico</label>
+        <input id="f-topic" name="topic" placeholder="Ex: Funções Exponenciais" required>
+      </div>
+
+      <div class="form-group">
+        <label for="f-description">Descrição <span class="text-dim">(opcional)</span></label>
+        <textarea id="f-description" name="description"
+                  placeholder="Detalhes adicionais..." style="min-height:60px"></textarea>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem">
+        <div class="form-group" style="margin:0">
+          <label for="f-date">Data</label>
+          <input id="f-date" name="scheduled_date" type="date" required>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="f-time">Horário <span class="text-dim">(opcional)</span></label>
+          <input id="f-time" name="scheduled_time" type="time">
+        </div>
+      </div>
+
+      <div class="form-group mt-2">
+        <label for="f-status">Status</label>
+        <select id="f-status" name="status">
+          <option value="pending">Pendente</option>
+          <option value="done">Concluído</option>
+          <option value="skipped">Ignorado</option>
+        </select>
+      </div>
+
+      <div style="display:flex;gap:.65rem;margin-top:1.1rem;justify-content:flex-end">
+        <button type="button" id="btn-delete" class="btn btn-danger btn-sm hidden"
+                onclick="deleteItem()">Excluir</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-sm" id="btn-submit">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+'use strict';
+
+/* ------------------------------------------------------------------
+   Dados do servidor
+   ------------------------------------------------------------------ */
+const SERVER_MONTH = {{ (month or '') | tojson }};
+
+const ITEMS = [
+{% for item in items %}
+  {
+    id:             {{ item.id }},
+    subject:        {{ item.subject | tojson }},
+    topic:          {{ item.topic   | tojson }},
+    description:    {{ (item.description or '') | tojson }},
+    scheduled_date: {{ item.scheduled_date | tojson }},
+    scheduled_time: {{ (item.scheduled_time or '') | tojson }},
+    status:         {{ item.status | tojson }},
+    color:          {{ (item.color or '#6b7280') | tojson }}
+  }{{ ',' if not loop.last }}
+{% endfor %}
+];
+
+/* ------------------------------------------------------------------
+   Estado global
+   ------------------------------------------------------------------ */
+let currentYear, currentMonth;   // number, 1-based
+
+function initMonth() {
+  if (SERVER_MONTH && /^\d{4}-\d{2}$/.test(SERVER_MONTH)) {
+    [currentYear, currentMonth] = SERVER_MONTH.split('-').map(Number);
+  } else {
+    const now = new Date();
+    currentYear  = now.getFullYear();
+    currentMonth = now.getMonth() + 1;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Utilitários de mês
+   ------------------------------------------------------------------ */
+const MONTH_NAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                     'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function padZ(n) { return String(n).padStart(2,'0'); }
+function fmtMonth(y, m) { return `${y}-${padZ(m)}`; }
+
+function prevMonthStr() {
+  return m => m === 1
+    ? fmtMonth(currentYear - 1, 12)
+    : fmtMonth(currentYear, currentMonth - 1);
+}
+function nextMonthStr() {
+  return currentMonth === 12
+    ? fmtMonth(currentYear + 1, 1)
+    : fmtMonth(currentYear, currentMonth + 1);
+}
+
+function itemsForDay(dateStr) {
+  return ITEMS.filter(i => i.scheduled_date === dateStr);
+}
+
+/* ------------------------------------------------------------------
+   Calendário
+   ------------------------------------------------------------------ */
+function renderCalendar() {
+  const y = currentYear, m = currentMonth;
+
+  // Atualiza label e links de navegação
+  document.getElementById('month-label').textContent =
+    `${MONTH_NAMES[m-1]} ${y}`;
+  document.getElementById('link-prev').href =
+    `/schedule?month=${m === 1 ? fmtMonth(y-1,12) : fmtMonth(y,m-1)}`;
+  document.getElementById('link-next').href =
+    `/schedule?month=${m === 12 ? fmtMonth(y+1,1) : fmtMonth(y,m+1)}`;
+  const picker = document.getElementById('month-picker');
+  if (picker && !picker.value) picker.value = fmtMonth(y,m);
+
+  // Cabeçalho dias da semana
+  const hGrid = document.getElementById('cal-headers');
+  hGrid.innerHTML = '';
+  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(d => {
+    const div = document.createElement('div');
+    div.className = 'cal-header';
+    div.textContent = d;
+    hGrid.appendChild(div);
+  });
+
+  // Construção das células
+  const grid = document.getElementById('cal-body');
+  grid.innerHTML = '';
+
+  const firstDay = new Date(y, m-1, 1).getDay(); // 0=Dom
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const daysInPrev  = new Date(y, m-1, 0).getDate();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${padZ(today.getMonth()+1)}-${padZ(today.getDate())}`;
+
+  // Células do mês anterior (relleno)
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const d = daysInPrev - i;
+    const pm = m === 1 ? 12 : m-1;
+    const py = m === 1 ? y-1 : y;
+    grid.appendChild(makeCell(py, pm, d, true, todayStr));
+  }
+  // Células do mês atual
+  for (let d = 1; d <= daysInMonth; d++) {
+    grid.appendChild(makeCell(y, m, d, false, todayStr));
+  }
+  // Células do próximo mês (completar última semana)
+  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+  const trailing   = totalCells - (firstDay + daysInMonth);
+  const nm = m === 12 ? 1 : m+1;
+  const ny = m === 12 ? y+1 : y;
+  for (let d = 1; d <= trailing; d++) {
+    grid.appendChild(makeCell(ny, nm, d, true, todayStr));
+  }
+}
+
+function makeCell(y, m, d, otherMonth, todayStr) {
+  const dateStr = `${y}-${padZ(m)}-${padZ(d)}`;
+  const cell    = document.createElement('div');
+  const items   = itemsForDay(dateStr);
+  cell.className = 'cal-cell' +
+    (otherMonth         ? ' other-month' : '') +
+    (dateStr === todayStr ? ' today'      : '') +
+    (items.length > 0   ? ' has-items'   : '');
+
+  // Número do dia
+  const dayNum = document.createElement('div');
+  dayNum.className = 'cal-day-num';
+  if (dateStr === todayStr) {
+    dayNum.innerHTML = `<span class="today-dot">${d}</span>`;
+  } else {
+    dayNum.textContent = d;
+  }
+  cell.appendChild(dayNum);
+
+  // Chips de itens (máx 3, depois "+N mais")
+  const MAX_CHIPS = 3;
+  items.slice(0, MAX_CHIPS).forEach(item => {
+    const chip = document.createElement('span');
+    chip.className = 'cal-chip ' + item.status;
+    chip.style.background = item.color;
+    chip.textContent = (item.scheduled_time ? item.scheduled_time + ' ' : '') + item.topic;
+    chip.title = `${item.subject}: ${item.topic}`;
+    chip.onclick = (e) => { e.stopPropagation(); openModal(item); };
+    cell.appendChild(chip);
+  });
+  if (items.length > MAX_CHIPS) {
+    const more = document.createElement('div');
+    more.className = 'cal-more';
+    more.textContent = `+${items.length - MAX_CHIPS} mais`;
+    cell.appendChild(more);
+  }
+
+  // Clicar na célula vazia → criar novo item com a data pré-preenchida
+  cell.addEventListener('click', () => openModal(null, dateStr));
+  return cell;
+}
+
+/* ------------------------------------------------------------------
+   Lista cronológica
+   ------------------------------------------------------------------ */
+function renderList() {
+  const filterStatus = document.getElementById('filter-status').value;
+  const list = document.getElementById('sched-list');
+  const emptyMsg = document.getElementById('empty-msg');
+
+  const filtered = ITEMS
+    .filter(i => !filterStatus || i.status === filterStatus)
+    .sort((a,b) => {
+      const da = a.scheduled_date + (a.scheduled_time || '00:00');
+      const db = b.scheduled_date + (b.scheduled_time || '00:00');
+      return da < db ? -1 : da > db ? 1 : 0;
+    });
+
+  list.innerHTML = '';
+  if (!filtered.length) {
+    emptyMsg.classList.remove('hidden');
+    return;
+  }
+  emptyMsg.classList.add('hidden');
+
+  // Agrupa por dia para exibir cabeçalhos de data
+  let lastDate = '';
+  filtered.forEach(item => {
+    if (item.scheduled_date !== lastDate) {
+      lastDate = item.scheduled_date;
+      const hdr = document.createElement('div');
+      hdr.style.cssText = 'font-size:.78rem;font-weight:600;color:var(--text-muted);' +
+                          'margin-top:.75rem;margin-bottom:.25rem;padding-left:.2rem;';
+      hdr.textContent = fmtDateLabel(item.scheduled_date);
+      list.appendChild(hdr);
+    }
+
+    const el = document.createElement('div');
+    el.className = 'sched-item ' + item.status;
+    el.style.borderLeftColor = item.color;
+    el.innerHTML = `
+      <div class="sched-item__time">${item.scheduled_time || '--:--'}</div>
+      <div class="sched-item__body">
+        <div class="sched-item__subj">${escHtml(item.subject)}</div>
+        <div class="sched-item__topic">${escHtml(item.topic)}</div>
+        ${item.description
+          ? `<div class="sched-item__desc">${escHtml(item.description)}</div>`
+          : ''}
+      </div>
+      <span class="status-pill ${item.status}">${statusLabel(item.status)}</span>
+      <div class="sched-item__actions">
+        <button class="btn btn-ghost btn-sm" onclick='editFromList(${item.id})' title="Editar">✎</button>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+
+function fmtDateLabel(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const dt = new Date(y,m-1,d);
+  return dt.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+}
+
+function statusLabel(s) {
+  return s === 'done' ? '✓ Concluído' : s === 'skipped' ? '— Ignorado' : '● Pendente';
+}
+
+function editFromList(id) {
+  const item = ITEMS.find(i => i.id === id);
+  if (item) openModal(item);
+}
+
+/* ------------------------------------------------------------------
+   Modal
+   ------------------------------------------------------------------ */
+function openModal(item = null, preDate = null) {
+  const overlay = document.getElementById('modal-overlay');
+  const form    = document.getElementById('modal-form');
+  const titleEl = document.getElementById('modal-title-text');
+  const delBtn  = document.getElementById('btn-delete');
+
+  form.reset();
+  document.getElementById('edit-id').value = '';
+
+  if (item) {
+    titleEl.textContent = 'Editar item';
+    document.getElementById('edit-id').value        = item.id;
+    document.getElementById('f-subject').value      = item.subject;
+    document.getElementById('f-topic').value        = item.topic;
+    document.getElementById('f-description').value  = item.description || '';
+    document.getElementById('f-date').value         = item.scheduled_date;
+    document.getElementById('f-time').value         = item.scheduled_time || '';
+    document.getElementById('f-status').value       = item.status;
+    delBtn.classList.remove('hidden');
+  } else {
+    titleEl.textContent = 'Novo item';
+    if (preDate) document.getElementById('f-date').value = preDate;
+    delBtn.classList.add('hidden');
+  }
+
+  overlay.classList.remove('hidden');
+  document.getElementById('f-subject').focus();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+// Fecha ao clicar no overlay fora do box
+document.getElementById('modal-overlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+// Fecha com Esc
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+/* ------------------------------------------------------------------
+   AJAX — criar / editar / excluir
+   ------------------------------------------------------------------ */
+async function submitItem(e) {
+  e.preventDefault();
+  const id      = document.getElementById('edit-id').value;
+  const btn     = document.getElementById('btn-submit');
+  const method  = id ? 'PUT' : 'POST';
+  const url     = id ? `/api/schedule/${id}` : '/api/schedule';
+
+  const payload = {
+    subject:        document.getElementById('f-subject').value.trim(),
+    topic:          document.getElementById('f-topic').value.trim(),
+    description:    document.getElementById('f-description').value.trim() || null,
+    scheduled_date: document.getElementById('f-date').value,
+    scheduled_time: document.getElementById('f-time').value || null,
+    status:         document.getElementById('f-status').value,
+  };
+
+  btn.disabled = true;
+  try {
+    const resp = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+    showToast(id ? 'Item atualizado' : 'Item criado', 'success');
+    closeModal();
+    // Recarrega a página preservando o mês atual
+    const cur = fmtMonth(currentYear, currentMonth);
+    location.href = `/schedule?month=${cur}`;
+  } catch (err) {
+    showToast('Erro ao salvar: ' + err.message, 'error');
+    btn.disabled = false;
+  }
+}
+
+async function deleteItem() {
+  const id = document.getElementById('edit-id').value;
+  if (!id) return;
+  if (!confirm('Excluir este item do cronograma?')) return;
+
+  try {
+    const resp = await fetch(`/api/schedule/${id}`, { method: 'DELETE' });
+    if (!resp.ok && resp.status !== 204) throw new Error('HTTP ' + resp.status);
+    showToast('Item excluído', 'success');
+    closeModal();
+    const cur = fmtMonth(currentYear, currentMonth);
+    location.href = `/schedule?month=${cur}`;
+  } catch (err) {
+    showToast('Erro ao excluir: ' + err.message, 'error');
+  }
+}
+
+/* ------------------------------------------------------------------
+   Toggle de status rápido (clique direito / duplo clique no chip)
+   ------------------------------------------------------------------ */
+async function toggleStatus(id, newStatus) {
+  try {
+    await fetch(`/api/schedule/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    const cur = fmtMonth(currentYear, currentMonth);
+    location.href = `/schedule?month=${cur}`;
+  } catch {
+    showToast('Erro ao atualizar status', 'error');
+  }
+}
+
+/* ------------------------------------------------------------------
+   Utilitários
+   ------------------------------------------------------------------ */
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ------------------------------------------------------------------
+   Init
+   ------------------------------------------------------------------ */
+initMonth();
+renderCalendar();
+renderList();
+
+})();
+</script>
+{% endblock %}

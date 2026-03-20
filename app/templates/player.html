@@ -1,0 +1,535 @@
+{% extends "base.html" %}
+
+{% block title %}{{ video.title }} — ENEM Studies{% endblock %}
+
+{# Formata segundos como M:SS ou H:MM:SS #}
+{% macro fmt_time(total_seconds) %}
+  {%- set s = total_seconds | int -%}
+  {%- set h = s // 3600 -%}
+  {%- set m = (s % 3600) // 60 -%}
+  {%- set sec = s % 60 -%}
+  {%- if h > 0 -%}{{ h }}:{{ '%02d' | format(m) }}:{{ '%02d' | format(sec) }}
+  {%- else -%}{{ m }}:{{ '%02d' | format(sec) }}{%- endif -%}
+{% endmacro %}
+
+{% block head %}
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
+<style>
+/* ---- Player page overrides ---- */
+.vjs-theme-enem .vjs-control-bar      { background: rgba(15,23,42,.85); }
+.vjs-theme-enem .vjs-play-progress,
+.vjs-theme-enem .vjs-volume-level     { background: var(--primary); }
+.vjs-theme-enem .vjs-big-play-button  { border-color: var(--primary); background: rgba(99,102,241,.35); }
+.vjs-theme-enem:hover .vjs-big-play-button { background: rgba(99,102,241,.6); }
+
+.note-form textarea { min-height: 64px; }
+
+/* Sidebar do player — seção atual destacada */
+.plist-item { display:flex; align-items:flex-start; gap:.5rem;
+              padding:.4rem .75rem; border-radius:4px; font-size:.82rem;
+              color:var(--text-muted); cursor:pointer; transition:background .12s; }
+.plist-item:hover { background:var(--surface-2); color:var(--text); }
+.plist-item.active { background:rgba(99,102,241,.18); color:var(--text); font-weight:600;
+                     border-left:2px solid var(--primary); padding-left:calc(.75rem - 2px); }
+.plist-item__icon { flex-shrink:0; width:1.1rem; text-align:center; font-size:.82rem; margin-top:.08rem;
+                    color:var(--primary-h); }
+.plist-item__title { flex:1; line-height:1.35; }
+.plist-item__dur { flex-shrink:0; font-size:.7rem; color:var(--text-dim); align-self:flex-start; margin-top:.1rem; }
+
+.section-hdr { display:flex; align-items:center; gap:.5rem;
+               padding:.5rem .75rem .3rem; cursor:pointer; user-select:none;
+               border-top:1px solid var(--border); margin-top:.25rem;
+               transition:background .12s; }
+.section-hdr:first-child { border-top:none; margin-top:0; }
+.section-hdr:hover { background:var(--surface-2); }
+.section-hdr h4 { font-size:.75rem; font-weight:600; letter-spacing:.05em;
+                  color:var(--text-muted); margin:0; flex:1; }
+.section-hdr .s-progress { font-size:.7rem; color:var(--text-dim); flex-shrink:0; }
+
+.note-row { display:flex; gap:.55rem; padding:.5rem 0;
+            border-bottom:1px solid var(--border); font-size:.85rem; }
+.note-row:last-child { border-bottom:none; }
+.note-ts { flex-shrink:0; font-family:monospace; font-size:.78rem;
+           color:var(--primary-h); background:rgba(99,102,241,.15);
+           border-radius:4px; padding:.1rem .4rem; cursor:pointer;
+           white-space:nowrap; align-self:flex-start; }
+.note-ts:hover { background:rgba(99,102,241,.3); }
+.note-body { flex:1; color:var(--text); line-height:1.45; white-space:pre-wrap; word-break:break-word; }
+.note-del { flex-shrink:0; align-self:flex-start; background:none; border:none;
+            color:var(--text-dim); cursor:pointer; font-size:.85rem; padding:.1rem .25rem;
+            border-radius:4px; }
+.note-del:hover { color:var(--danger); background:rgba(239,68,68,.12); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# ---- helpers de progresso no template ---- #}
+{% set cp_pct = (course_progress[0] / course_progress[1] * 100) | round | int
+                if course_progress[1] > 0 else 0 %}
+
+<!-- ==================================================================
+     Navegação topo
+     ================================================================== -->
+<div style="display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;margin-bottom:.9rem">
+  <a href="/" class="btn btn-ghost btn-sm">← Dashboard</a>
+
+  {% if prev_video %}
+    <a href="/watch/{{ prev_video.id }}" class="btn btn-ghost btn-sm"
+       title="{{ prev_video.title }}">‹ Anterior</a>
+  {% endif %}
+
+  <div style="flex:1;min-width:0;text-align:center;font-size:.8rem;color:var(--text-dim)">
+    {% if current_canal %}
+      {{ current_canal }}
+      {% if current_curso %} › <strong style="color:var(--text-muted)">{{ current_curso }}</strong>{% endif %}
+      {% if current_secao %} › {{ current_secao }}{% endif %}
+    {% endif %}
+  </div>
+
+  {% if next_video %}
+    <a href="/watch/{{ next_video.id }}" class="btn btn-ghost btn-sm"
+       title="{{ next_video.title }}">Próximo ›</a>
+  {% endif %}
+</div>
+
+<!-- ==================================================================
+     Layout player + sidebar
+     ================================================================== -->
+<div class="player-layout">
+
+  <!-- ----------------------------------------------------------------
+       Coluna principal: player, meta, materiais, notas
+       ---------------------------------------------------------------- -->
+  <div>
+
+    <!-- Player -->
+    <div class="player-video-wrap">
+      <video id="enem-player"
+             class="video-js vjs-theme-enem vjs-big-play-centered"
+             controls
+             preload="auto"
+             data-video-id="{{ video.id }}"
+             data-resume="{{ progress.current_time | round(1) if progress else 0 }}">
+        <source src="/stream/{{ video.id }}" type="video/mp4">
+        <p style="color:#ccc;padding:1rem">
+          Seu navegador não suporta vídeo HTML5.
+        </p>
+      </video>
+    </div>
+
+    <!-- Meta do vídeo -->
+    <div class="player-meta" style="margin-top:.85rem">
+      <div style="display:flex;align-items:flex-start;gap:.75rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:0">
+          <h1 class="player-meta__title">{{ video.title }}</h1>
+          <div class="player-meta__tags mt-1">
+            {% if video.subject %}
+              <span class="tag">{{ video.subject }}</span>
+            {% endif %}
+            {% if video.course_name %}
+              <span class="tag">{{ video.course_name }}</span>
+            {% endif %}
+            {% if video.menu_tag %}
+              <span class="tag" style="font-family:monospace;color:var(--text-dim)">
+                {{ video.menu_tag }}
+              </span>
+            {% endif %}
+            {% if video.duration %}
+              <span class="tag">{{ video.duration // 60 }}min</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Cache indicator + trigger manual -->
+        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:.4rem">
+          {% if is_cached %}
+            <span class="cache-badge cache-badge--local">📦 Cache local</span>
+          {% else %}
+            <span class="cache-badge cache-badge--stream">🌐 Streaming</span>
+            <button id="btn-cache"
+                    class="btn btn-ghost btn-sm"
+                    data-video-id="{{ video.id }}"
+                    title="Baixar para cache local">
+              ↓ Cachear
+            </button>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if progress %}
+      <div style="margin-top:.75rem">
+        {% set v_pct = (progress.current_time / progress.duration * 100) | round | int
+                       if progress.duration else 0 %}
+        <div style="display:flex;align-items:center;gap:.6rem">
+          {% if progress.completed %}
+            <span style="color:var(--success);font-size:.82rem">✓ Concluído</span>
+          {% else %}
+            <div class="progress-bar" style="flex:1;height:5px">
+              <div class="progress-bar__fill" style="width:{{ v_pct }}%"></div>
+            </div>
+            <span class="text-xs text-dim">{{ v_pct }}%</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Materiais da aula -->
+    {% if lesson_materials %}
+    <div class="card mt-3" style="padding:.75rem 1rem">
+      <h3 style="font-size:.85rem;font-weight:600;margin-bottom:.5rem">
+        Materiais desta aula
+      </h3>
+      <ul style="display:flex;flex-direction:column;gap:.3rem">
+        {% for m in lesson_materials %}
+        <li>
+          <a href="/download/material/{{ m.id }}"
+             style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;
+                    color:var(--text-muted);padding:.3rem .4rem;border-radius:4px;"
+             class="video-item">
+            <span>{% if m.file_ext == '.pdf' %}📄
+                  {% elif m.file_ext in ['.zip','.rar','.7z'] %}📦
+                  {% else %}📎{% endif %}</span>
+            <span style="flex:1">{{ m.title }}</span>
+            {% if m.file_size %}
+              <span class="text-xs text-dim">
+                {{ (m.file_size / 1048576) | round(1) }} MB
+              </span>
+            {% endif %}
+            {% if m.file_ext %}
+              <span class="tag">{{ m.file_ext }}</span>
+            {% endif %}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <!-- Anotações -->
+    <div class="notes-section mt-3">
+      <h3 style="font-size:.95rem;font-weight:600;margin-bottom:.65rem">Anotações</h3>
+
+      <ul id="notes-list" style="margin-bottom:.85rem">
+        {% if notes %}
+          {% for note in notes %}
+          <li class="note-row" data-id="{{ note.id }}">
+            <span class="note-ts" data-ts="{{ note.video_timestamp }}">
+              {{ fmt_time(note.video_timestamp) }}
+            </span>
+            <span class="note-body">{{ note.content }}</span>
+            <button class="note-del" data-id="{{ note.id }}" title="Apagar anotação">✕</button>
+          </li>
+          {% endfor %}
+        {% else %}
+          <li id="notes-empty" style="color:var(--text-dim);font-size:.875rem;padding:.5rem 0">
+            Nenhuma anotação ainda. Pause o vídeo e escreva abaixo.
+          </li>
+        {% endif %}
+      </ul>
+
+      <form id="note-form" class="card" style="padding:.75rem 1rem;display:flex;flex-direction:column;gap:.55rem">
+        <textarea name="content" id="note-content"
+                  placeholder="Nova anotação... (o timestamp será o momento atual do vídeo)"
+                  required></textarea>
+        <div style="display:flex;align-items:center;gap:.65rem">
+          <span id="note-ts-preview" class="text-xs text-dim">@ 0:00</span>
+          <div style="flex:1"></div>
+          <button type="submit" class="btn btn-primary btn-sm">Salvar anotação</button>
+        </div>
+      </form>
+    </div>
+
+  </div>{# fim coluna principal #}
+
+  <!-- ----------------------------------------------------------------
+       Sidebar: índice do curso + navegação da seção
+       ---------------------------------------------------------------- -->
+  <aside class="player-sidebar">
+
+    <!-- Cabeçalho curso + progresso geral -->
+    <div class="player-sidebar__header" style="display:flex;align-items:center;gap:.5rem">
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        {{ current_curso or 'Seção atual' }}
+      </span>
+      <span class="text-xs text-dim" style="flex-shrink:0">
+        {{ course_progress[0] }}/{{ course_progress[1] }}
+      </span>
+    </div>
+
+    <!-- Barra de progresso do curso -->
+    <div style="padding:.3rem .85rem .5rem">
+      <div class="progress-bar" style="height:4px">
+        <div class="progress-bar__fill{% if cp_pct==100 %} progress-bar__fill--done{% endif %}"
+             style="width:{{ cp_pct }}%"></div>
+      </div>
+    </div>
+
+    <!-- Lista de seções e vídeos -->
+    <div style="padding-bottom:.5rem">
+      {% for secao, videos in course_sections.items() %}
+        {% set lp = lesson_progress.get(secao, (0, videos | length)) %}
+        {% set lp_pct = (lp[0] / lp[1] * 100) | round | int if lp[1] > 0 else 0 %}
+        {% set is_current_section = (secao == current_secao) %}
+
+        <div class="section-hdr" data-section="{{ loop.index }}" role="button" tabindex="0"
+             aria-expanded="{{ 'true' if is_current_section else 'false' }}">
+          <h4>{{ secao }}</h4>
+          <span class="s-progress">{{ lp[0] }}/{{ lp[1] }}</span>
+          <span style="font-size:.7rem;color:var(--text-dim);margin-left:.25rem">
+            {{ '▾' if is_current_section else '▸' }}
+          </span>
+        </div>
+
+        <!-- Mini progress da seção -->
+        <div style="padding:0 .65rem .35rem">
+          <div class="progress-bar" style="height:2px">
+            <div class="progress-bar__fill{% if lp_pct==100 %} progress-bar__fill--done{% endif %}"
+                 style="width:{{ lp_pct }}%"></div>
+          </div>
+        </div>
+
+        <ul class="section-videos"
+            id="sv-{{ loop.index }}"
+            style="{{ '' if is_current_section else 'display:none' }}">
+          {% for v in videos %}
+            <li>
+              <a href="/watch/{{ v.id }}"
+                 class="plist-item{{ ' active' if v.id == video.id else '' }}"
+                 title="{{ v.title }}">
+                <span class="plist-item__icon">
+                  {%- if v.id == video.id -%}▶
+                  {%- else -%}○{%- endif -%}
+                </span>
+                <span class="plist-item__title">{{ v.title }}</span>
+                {% if v.duration %}
+                  <span class="plist-item__dur">{{ v.duration // 60 }}min</span>
+                {% endif %}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
+    </div>
+
+  </aside>
+
+</div>{# fim player-layout #}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+<script>
+(function () {
+'use strict';
+
+const VIDEO_ID   = {{ video.id }};
+const RESUME_AT  = parseFloat('{{ progress.current_time | round(1) if progress else 0 }}');
+
+/* ------------------------------------------------------------------
+   1. Video.js init
+   ------------------------------------------------------------------ */
+const player = videojs('enem-player', {
+  fluid: true,
+  playbackRates: [0.75, 1, 1.25, 1.5, 1.75, 2],
+  userActions: { hotkeys: true },
+});
+
+player.ready(function () {
+  if (RESUME_AT > 5) {
+    this.currentTime(RESUME_AT);
+  }
+});
+
+/* ------------------------------------------------------------------
+   2. Auto-save progresso
+   ------------------------------------------------------------------ */
+let lastSaved = 0;
+
+function saveProgress() {
+  const cur = player.currentTime();
+  const dur = player.duration();
+  if (!dur || cur < 1) return;
+  if (Math.abs(cur - lastSaved) < 4) return; // evita chamadas duplas
+  lastSaved = cur;
+  fetch('/api/progress', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ video_id: VIDEO_ID, current_time: cur, duration: dur }),
+  }).catch(() => {});
+}
+
+setInterval(saveProgress, 5000);
+player.on('pause',   saveProgress);
+player.on('ended',   saveProgress);
+window.addEventListener('beforeunload', saveProgress);
+
+/* ------------------------------------------------------------------
+   3. Timestamp preview no form de anotações
+   ------------------------------------------------------------------ */
+const tsPreview = document.getElementById('note-ts-preview');
+
+player.on('timeupdate', function () {
+  if (tsPreview) tsPreview.textContent = '@ ' + formatTime(Math.floor(player.currentTime()));
+});
+
+/* ------------------------------------------------------------------
+   4. Anotações
+   ------------------------------------------------------------------ */
+const noteForm    = document.getElementById('note-form');
+const noteContent = document.getElementById('note-content');
+const notesList   = document.getElementById('notes-list');
+const notesEmpty  = document.getElementById('notes-empty');
+
+// Submete nova anotação
+noteForm && noteForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const content = noteContent.value.trim();
+  if (!content) return;
+  const ts = player.currentTime();
+
+  try {
+    const resp = await fetch('/api/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ video_id: VIDEO_ID, content, video_timestamp: ts }),
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const note = await resp.json();
+    noteContent.value = '';
+    if (notesEmpty) notesEmpty.remove();
+    appendNote(note);
+    showToast('Anotação salva');
+  } catch (err) {
+    showToast('Erro ao salvar anotação', 'error');
+  }
+});
+
+// Clicar no timestamp → salta no player
+document.querySelectorAll('.note-ts[data-ts]').forEach(setupTsClick);
+
+function setupTsClick(el) {
+  el.addEventListener('click', () => {
+    const ts = parseFloat(el.dataset.ts);
+    if (!isNaN(ts)) {
+      player.currentTime(ts);
+      player.play().catch(() => {});
+    }
+  });
+}
+
+// Deletar anotação
+notesList && notesList.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.note-del');
+  if (!btn) return;
+  const id = btn.dataset.id;
+  try {
+    const resp = await fetch('/api/notes/' + id, { method: 'DELETE' });
+    if (!resp.ok && resp.status !== 204) throw new Error();
+    btn.closest('.note-row').remove();
+    if (!notesList.querySelector('.note-row')) {
+      const li = document.createElement('li');
+      li.id = 'notes-empty';
+      li.style.cssText = 'color:var(--text-dim);font-size:.875rem;padding:.5rem 0';
+      li.textContent = 'Nenhuma anotação ainda.';
+      notesList.appendChild(li);
+    }
+    showToast('Anotação removida');
+  } catch {
+    showToast('Erro ao remover anotação', 'error');
+  }
+});
+
+function appendNote(note) {
+  const li = document.createElement('li');
+  li.className = 'note-row';
+  li.dataset.id = note.id;
+  li.innerHTML = `
+    <span class="note-ts" data-ts="${note.video_timestamp}">${formatTime(Math.floor(note.video_timestamp))}</span>
+    <span class="note-body">${escHtml(note.content)}</span>
+    <button class="note-del" data-id="${note.id}" title="Apagar">✕</button>
+  `;
+  setupTsClick(li.querySelector('.note-ts'));
+  // Insere em ordem por timestamp
+  const rows = notesList.querySelectorAll('.note-row');
+  let inserted = false;
+  for (const row of rows) {
+    if (parseFloat(row.dataset.ts || row.querySelector('.note-ts')?.dataset.ts) > note.video_timestamp) {
+      notesList.insertBefore(li, row);
+      inserted = true;
+      break;
+    }
+  }
+  if (!inserted) notesList.appendChild(li);
+}
+
+/* ------------------------------------------------------------------
+   5. Seções colapsáveis na sidebar
+   ------------------------------------------------------------------ */
+document.querySelectorAll('.section-hdr').forEach((hdr) => {
+  hdr.addEventListener('click', () => {
+    const idx = hdr.dataset.section;
+    const ul = document.getElementById('sv-' + idx);
+    if (!ul) return;
+    const open = ul.style.display !== 'none';
+    ul.style.display = open ? 'none' : '';
+    hdr.setAttribute('aria-expanded', !open);
+    hdr.querySelector('span:last-child').textContent = open ? '▸' : '▾';
+  });
+  hdr.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hdr.click(); }
+  });
+});
+
+// Faz scroll até o vídeo ativo na sidebar ao carregar
+const activeItem = document.querySelector('.plist-item.active');
+if (activeItem) {
+  setTimeout(() => activeItem.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
+}
+
+/* ------------------------------------------------------------------
+   6. Cachear manualmente
+   ------------------------------------------------------------------ */
+const btnCache = document.getElementById('btn-cache');
+btnCache && btnCache.addEventListener('click', async () => {
+  btnCache.disabled = true;
+  btnCache.textContent = '↻ Baixando…';
+  try {
+    const resp = await fetch('/api/videos/' + VIDEO_ID + '/cache', { method: 'POST' });
+    const data = await resp.json();
+    if (data.status === 'already_cached') {
+      showToast('Vídeo já está em cache', 'success');
+    } else {
+      showToast('Download iniciado em background', 'success');
+      btnCache.textContent = '↓ Em fila…';
+    }
+  } catch {
+    showToast('Erro ao iniciar cache', 'error');
+    btnCache.disabled = false;
+    btnCache.textContent = '↓ Cachear';
+  }
+});
+
+/* ------------------------------------------------------------------
+   Utilidades
+   ------------------------------------------------------------------ */
+function formatTime(s) {
+  s = Math.floor(s || 0);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  const p = (n) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${p(m)}:${p(sec)}` : `${m}:${p(sec)}`;
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+})();
+</script>
+{% endblock %}

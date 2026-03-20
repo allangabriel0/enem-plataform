@@ -1,0 +1,1048 @@
+CANAL: Filosofia
+
+= CORUJAFLIX_-_Filosofia
+== 1-Introdução_à_Filosofia
+#F001 #F002 #F003 #F004 #F005 #F006 #F007 #F008
+
+== 2-Conhecimento_A_Filosofia_Grega
+#F009 #F010 #F011 #F012 #F013 #F014 #F015 #F016 #F017 #F018 #F019 #F020
+
+== 3-Filosofia_Medieval
+#F021 #F022 #F023 #F024 #F025
+
+== 4-Conhecimento_Filosofia_Moderna
+#F026 #F027 #F028 #F029 #F030 #F031 #F032 #F033 #F034 #F035 #F036 #F037
+
+== 5-Conhecimento_Filosofia_Contemporânea
+#F038 #F039 #F040 #F041 #F042 #F043 #F044 #F045 #F046 #F047
+
+== 6-Política
+#F048 #F049 #F050 #F051 #F052 #F053 #F054 #F055 #F056 #F057 #F058 #F059 #F060 #F061 #F062 #F063
+
+== 7-Ética
+#F064 #F065 #F066 #F067 #F068 #F069 #F070 #F071 #F072 #F073 #F074 #F075 #F076 #F077 #F078 #F079 #F080 #F081 #F082
+
+== 8-Estética
+#F083 #F084 #F085 #F086 #F087 #F088 #F089 #F090 #F091 #F092 #F093 #F094 #F095 #F096 #F097 #F098 #F099 #F100
+
+== 9-Metafísica
+#F101 #F102 #F103 #F104 #F105 #F106 #F107 #F108 #F109 #F110 #F111 #F112 #F113 #F114
+
+== 10-Lógica
+#F115 #F116
+
+= Curso_de_Filosofia_para_ENEM_2022
+== Aula_00_-_Introdução_e_Nascimento_da_Filosofia
+#F117 #F118 #F119 #F120 #F121 #F122 #F123 #F124 #F125 #F126 #F127
+
+== Aula_01_-_ÉticaTeoria_do_ConhecimentoDa_Idade_Média_à_Idade_Moderna
+#F128 #F129 #F130 #F131 #F132 #F133 #F134 #F135
+
+== Aula_02_-_Teoria_da_Conhecimento_e_a_crise_da_razão._Filosofia_da_Ciência
+#F136 #F137 #F138 #F139 #F140 #F141 #F142 #F143 #F144 #F145
+
+== Aula_03_-_Ética
+#F146 #F147 #F148 #F149 #F150 #F151 #F152 #F153 #F154 #F155 #F156 #F157
+
+== Aula_04_-_Política
+#F158 #F159 #F160 #F161 #F162 #F163 #F164 #F165 #F166 #F167
+
+== Aula_05_-_Estética_e_Metafísica
+#F168 #F169 #F170 #F171 #F172 #F173 #F174 #F175 #F176 #F177 #F178
+
+= Filosofia_para_ENEM_2022_Gabi_Garcia
+== AULA_00_NASCIMENTO_DA_FILOSOFIA_FILOSOFIA_CLÁSSICA_E_MEDIEVAL_Ética_e_Política
+#F179 #F180 #F181 #F182 #F183 #F184
+
+== AULA_01_FILOSOFIA_MODERNA_Ética_e_Política
+#F185 #F186 #F187 #F188 #F189 #F190 #F191 #F192 #F193
+
+== AULA_02_FILOSOFIA_CONTEMPORÂNEA_Ética_e_Política_Parte_1
+#F194 #F195 #F196 #F197 #F198 #F199 #F200 #F201
+
+== AULA_03_FILOSOFIA_CONTEMPORÂNEA_Ética_e_Política_Parte_2
+#F202 #F203 #F204 #F205 #F206 #F207 #F208 #F209
+
+== AULA_04_FILOSOFIA_CLÁSSICA_E_MEDIEVAL_Epistemologia
+#F210 #F211 #F212 #F213 #F214 #F215 #F216 #F217 #F218 #F219 #F220
+
+== AULA_05_FILOSOFIA_MODERNA
+#F221 #F222 #F223 #F224 #F225 #F226 #F227
+
+== AULA_06_FILOSOFIA_CONTEMPORÂNEA_Epistemologia
+#F228 #F229 #F230 #F231 #F232 #F233 #F234
+
+== AULA_07_DOS_CLÁSSICOS_AOS_MODERNOS_Estética
+#F235 #F236 #F237 #F238 #F239 #F240 #F241 #F242
+
+== AULA_08_CONTEMPORÂNEA_Estética
+#F243 #F244 #F245 #F246
+
+== Aula_Extra_Filosofia_e_Arte
+#F247 #F248 #F249 #F250 #F251 #F252 #F253 #F254 #F255 #F256
+
+
+CANAL: Inglês
+
+= CORUJAFLIX_-_Inglês
+== 1-Interpretação_de_Textos
+#F001 #F002 #F003 #F004
+
+== 2-Vocabulário
+#F005 #F006 #F007 #F008 #F009 #F010
+
+== 3-Gramática
+#F011 #F012 #F013 #F014 #F015 #F016 #F017 #F018 #F019 #F020 #F021 #F022 #F023 #F024 #F025 #F026 #F027 #F028
+
+== 4-Verbos
+#F029 #F030 #F031 #F032 #F033 #F034 #F035 #F036 #F037
+
+== 5-Conceitos
+#F038 #F039 #F040 #F041 #F042 #F043 #F044 #F045 #F046 #F047 #F048 #F049 #F050
+
+= Curso_de_Inglês_para_ENEM_2021_(Prof._Leonardo_Pontes)
+== Aula_00-Técnicas_de_leitura-Cognates_and_false_cognates
+#F051 #F052 #F053 #F054 #F055 #F056
+
+== Aula_01-Verb_Tenses
+#F057 #F058 #F059 #F060 #F061 #F062 #F063 #F064 #F065
+
+== Aula_02-Articles_and_nouns
+#F066 #F067 #F068 #F069 #F070
+
+== Aula_03-Adjectives_and_Adverbs
+#F071 #F072 #F073 #F074 #F075 #F076
+
+== Aula_04-Pronouns_and_prepositions
+#F077 #F078 #F079 #F080 #F081
+
+== Aula_05-Conjunctions_and_Clauses-Reported_and_direct_speech
+#F082 #F083 #F084 #F085 #F086 #F087
+
+== Aula_06-Question_Words_(Wh_questions)-Contraction-Quantifiers
+#F088 #F089 #F090 #F091 #F092
+
+== Aula_07-Relative_clauses-If_Clauses
+#F093 #F094 #F095 #F096 #F097 #F098
+
+== Aula_08-Passive_Voice-Tag_Questions
+#F099 #F100 #F101 #F102
+
+= Curso_de_Inglês_para_ENEM_2022
+== Aula 00-English General presentation
+#F103 #F104 #F105 #F106
+
+== Aula 01-Skimming and Scanning and other techniques. Identifying False Cognats Usando Skimming
+#F107 #F108 #F109
+
+== Aula 02-Verbs in texts
+#F110 #F111 #F112
+
+== Aula 03-Articles-Nouns
+#F113 #F114 #F115
+
+== Aula 04-Adjectives-Adverbs
+#F116 #F117 #F118 #F119
+
+== Aula 05-Pronouns-Prepositions
+#F120 #F121 #F122
+
+== Aula 06-Conjunctions_and_Clauses-Direct_Speech_x_Reported_Speech
+#F123 #F124 #F125 #F126
+
+== Aula 07-Linking_Words-Conectives-Question_Words
+#F127 #F128 #F129 #F130
+
+== Aula 08-If Clauses-Abbreviations-Contractions
+#F131 #F132 #F133
+
+== Aula 09-Quantifiers-Relative_Clauses
+#F134 #F135 #F136 #F137
+
+== Aula 10-Passive_Voice-Tag_Questions-Idioms
+#F138 #F139 #F140 #F141 #F142
+
+
+CANAL: Espanhol
+
+= CORUJAFLIX_-_Espanhol
+== 1-Fonética_e_Fonologia
+#F001 #F002 #F003 #F004
+
+== 2-Classes_Gramaticais
+#F005 #F006 #F007 #F008 #F009 #F010 #F011 #F012 #F013 #F014 #F015 #F016 #F017 #F018 #F019 #F020 #F021 #F022 #F023 #F024 #F025 #F026 #F027 #F028 #F029 #F030 #F031 #F032 #F033 #F034 #F035 #F036 #F037 #F038 #F039 #F040 #F041 #F042 #F043 #F044 #F045 #F046 #F047
+
+== 3-Análise_Sintática
+#F048 #F049 #F050 #F051 #F052 #F053 #F054 #F055
+
+== 4-Semântica
+#F056 #F057 #F058 #F059 #F060 #F061 #F062 #F063 #F064 #F065 #F066
+
+== 5-Interpretação_e_Compreensão_Textual
+#F067 #F068 #F069 #F070 #F071 #F072 #F073 #F074 #F075 #F076 #F077 #F078
+
+== 6-História_da_Hispanidade
+#F079 #F080 #F081 #F082
+
+= Curso_de_Espanhol_para_ENEM_2022
+== Aula_00_-_Fonética_e_fonologia._Alfabeto._Regras_de_acentuação
+#F083 #F084 #F085 #F086 #F087 #F088 #F089
+
+== Aula_01_-_Substantivos
+#F090 #F091 #F092 #F093
+
+== Aula_02_-_Pronomes_pessoais
+#F094 #F095 #F096 #F097 #F098
+
+== Aula_03_-_Pronomes_(parte_II)
+#F099 #F100 #F101 #F102 #F103 #F104
+
+== Aula_04_-_Artigos._Preposições._Contrações
+#F105 #F106 #F107 #F108 #F109 #F110 #F111 #F112 #F113 #F114 #F115 #F116
+
+== Aula_05_-_Adjetivos._Advérbios._Locuções
+#F117 #F118 #F119 #F120 #F121
+
+== Aula_06_-_Conjunções._Relações_lógicas_de_coerência_e_coesão
+#F122 #F123 #F124 #F125 #F126 #F127
+
+== Aula_07_-_Verbos_(parte_I)
+#F128 #F129 #F130 #F131 #F132 #F133
+
+== Aula_08_-_Verbos_(parte_II)
+#F134 #F135 #F136 #F137 #F138 #F139 #F140 #F141 #F142 #F143 #F144 #F145 #F146 #F147
+
+== Aula_09_-_Semântica._Falsos_cognatos
+#F148 #F149 #F150 #F151 #F152 #F153
+
+== Aula_10_-_Variação_linguística
+#F154 #F155 #F156 #F157 #F158 #F159
+
+== Aula_11_-_História_do_idioma
+#F160 #F161 #F162 #F163 #F164 #F165
+
+== Aula_12_-_Compreensão_e_interpretação_de_texto
+#F166 #F167 #F168 #F169 #F170 #F171 #F172
+
+
+CANAL: Biologia
+
+= CORUJAFLIX-Biologia
+== 01-Bioquímica_das_Células
+#F001 #F002 #F003 #F004 #F005 #F006 #F007 #F008 #F009 #F010 #F011 #F012 #F013
+
+== 02-Citologia
+#F014 #F015 #F016 #F017 #F018 #F019 #F020 #F021 #F022 #F023 #F024 #F025 #F026 #F027 #F028 #F029 #F030 #F031 #F032 #F033 #F034 #F035 #F036 #F037 #F038 #F039 #F040 #F041 #F042
+
+== 03-Reprodução
+#F043 #F044 #F045 #F046
+
+== 04-Embriologia
+#F047 #F048 #F049 #F050 #F051 #F052
+
+== 05-Histologia_Animal
+#F053 #F054 #F055 #F056 #F057 #F058 #F059 #F060 #F061
+
+== 06-Fisiologia_Humana
+#F062 #F063 #F064 #F065 #F066 #F067 #F068 #F069 #F070 #F071 #F072 #F073 #F074 #F075 #F076 #F077 #F078 #F079 #F080 #F081 #F082 #F083 #F084 #F085 #F086 #F087 #F088 #F089 #F090 #F091
+
+== 07-Doenças_Humanas
+#F092 #F093 #F094 #F095 #F096 #F097 #F098 #F099 #F100
+
+== 08-Classificação_Biológica
+#F101 #F102 #F103 #F104 #F105 #F106 #F107 #F108 #F109 #F110 #F111
+
+== 09-Biologia_Vegetal
+#F112 #F113 #F114 #F115 #F116 #F117 #F118 #F119 #F120 #F121 #F122 #F123 #F124 #F125 #F126 #F127 #F128 #F129 #F130
+
+== 10-Biologia_Animal
+#F131 #F132 #F133 #F134 #F135 #F136 #F137 #F138 #F139 #F140 #F141 #F142 #F143 #F144 #F145 #F146 #F147 #F148 #F149 #F150 #F151 #F152 #F153 #F154 #F155 #F156 #F157 #F158
+
+== 11-Genética
+#F159 #F160 #F161 #F162 #F163 #F164 #F165 #F166 #F167 #F168 #F169 #F170 #F171 #F172 #F173 #F174 #F175 #F176 #F177 #F178 #F179 #F180 #F181 #F182 #F183 #F184 #F185 #F186 #F187 #F188 #F189 #F190 #F191 #F192 #F193 #F194 #F195 #F196 #F197 #F198 #F199
+
+== 12-Ecologia
+#F200 #F201 #F202 #F203 #F204 #F205 #F206 #F207 #F208 #F209 #F210 #F211 #F212 #F213 #F214 #F215
+
+== 13-Desequilíbrios_Ambientais
+#F216 #F217 #F218 #F219 #F220 #F221 #F222 #F223 #F224
+
+= Curso_básico_de_Biologia_(Exclusivo_em_vídeo)
+== Aula_00_-_A_célula_-_Membrana_plasmática
+#F225 #F226 #F227 #F228
+
+== Aula_01_-_A_célula_-_Citoplasma
+#F229 #F230 #F231 #F232 #F233
+
+== Aula_02_-_A_célula_-_Núcleo
+#F234 #F235 #F236
+
+== Aula_03_-_Como_a_célula_obtém_energia_
+#F237 #F238 #F239 #F240 #F241
+
+= Curso_de_Biologia_para_ENEM_2022_(Prof._Bruna_Klassa)
+== Aula_00_-_Fundamentos_de_Biologia
+#F242 #F243 #F244 #F245 #F246 #F247
+
+== Aula_01_–_Membrana_plasmática_e_Citoplasma
+#F248 #F249 #F250 #F251 #F252 #F253
+
+== Aula_02_–_Metabolismo_Energético
+#F254 #F255 #F256 #F257 #F258 #F259 #F260 #F261 #F262 #F263
+
+== Aula_03_-_Núcleo_e_Ciclo_Celular
+#F264 #F265 #F266 #F267 #F268 #F269 #F270 #F271 #F272 #F273 #F274 #F275 #F276
+
+== Aula_04_–_Reprodução_Animal_e_Humana
+#F277 #F278 #F279 #F280 #F281 #F282
+
+== Aula_05_–_Desenvolvimento_Embrionário
+#F283 #F284 #F285 #F286 #F287 #F288 #F289
+
+== Aula_06_-_Histologia_Animal
+#F290 #F291 #F292 #F293 #F294 #F295 #F296 #F297
+
+== Aula_07_-_Classificação_Biológica_e_Virologia
+#F298 #F299 #F300 #F301 #F302
+
+== Aula_08_-_Microrganismos_e_Fungos
+#F303 #F304 #F305 #F306
+
+== Aula_09_–_Biologia_Vegetal
+#F307 #F308 #F309 #F310 #F311 #F312
+
+== Aula_10_-_Animais_Invertebrados
+#F313 #F314 #F315 #F316 #F317 #F318 #F319 #F320 #F321
+
+== Aula_11_–_Animais_Vertebrados
+#F322 #F323 #F324 #F325 #F326 #F327 #F328 #F329 #F330
+
+== Aula_12_–Fisiologia_Humana_I
+#F331 #F332 #F333 #F334 #F335 #F336
+
+== Aula_13_–_Fisiologia_Humana_Il
+#F337 #F338 #F339 #F340 #F341 #F342
+
+== Aula_14_–Imunidade_e_Patologia
+#F343 #F344 #F345 #F346 #F347 #F348
+
+== Aula_15_–_Genética
+#F349 #F350 #F351 #F352 #F353 #F354 #F355 #F356 #F357 #F358 #F359 #F360 #F361
+
+== Aula_16_–_Evolução
+#F362 #F363 #F364 #F365 #F366 #F367 #F368 #F369
+
+== Aula_17_-_Ecologia
+#F370 #F371 #F372 #F373 #F374 #F375 #F376 #F377 #F378 #F379 #F380 #F381
+
+= Curso_de_Biologia_para_ENEM_2022_(Prof._Carol_Negrin)
+== Aula_00-Princípios_básicos_da_biologia
+#F382 #F383 #F384 #F385 #F386 #F387 #F388 #F389 #F390 #F391
+
+== Aula_01-Membrana_plasmática
+#F392 #F393 #F394 #F395 #F396
+
+== Aula_02-Citoplasma
+#F397 #F398 #F399 #F400 #F401
+
+== Aula_03-Metabolismo_celular
+#F402 #F403 #F404 #F405 #F406 #F407 #F408 #F409 #F410
+== Aula_04-Núcleo_e_biotecnologia
+#F411 #F412 #F413 #F414 #F415 #F416 #F417 #F418 #F419
+
+== Aula_05-Ciclo_celular_e_reprodução
+#F420 #F421 #F422 #F423 #F424 #F425 #F426 #F427 #F428
+
+== Aula_06-Desenvolvimento_embrionário_e_histologia
+#F429 #F430 #F431 #F432 #F433 #F434 #F435 #F436 #F437 #F438 #F439
+
+== Aula_07-Fisiologia_Humana_I
+#F440 #F441 #F442 #F443 #F444 #F445 #F446 #F447
+
+== Aula_08-Fisiologia_Humana_II
+#F448 #F449 #F450 #F451 #F452 #F453 #F454 #F455
+
+== Aula_09-Fisiologia_Humana_III
+#F456 #F457 #F458 #F459 #F460 #F461
+
+== Aula_10-Classificação_biológica_e_vírus
+#F462 #F463 #F464 #F465 #F466
+
+== Aula_11-Microbiologia
+#F467 #F468 #F469 #F470 #F471 #F472 #F473 #F474
+
+== Aula_12-Biologia_vegetal
+#F475 #F476 #F477 #F478 #F479 #F480 #F481 #F482 #F483 #F484
+
+== Aula_13-Animais_invertebrados
+#F485 #F486 #F487 #F488 #F489 #F490 #F491 #F492 #F493 #F494
+
+== Aula_14-Animais_vertebrados
+#F495 #F496 #F497 #F498 #F499 #F500 #F501
+
+== Aula_15-Genética
+#F502 #F503 #F504 #F505 #F506 #F507 #F508 #F509 #F510 #F511 #F512
+
+== Aula_16-Evolução
+#F513 #F514 #F515 #F516 #F517 #F518 #F519
+
+== Aula_17-Ecologia_I
+#F520 #F521 #F522 #F523 #F524 #F525
+
+== Aula_18-Ecologia_II
+#F526 #F527 #F528 #F529 #F530
+
+= Curso_de_Biologia_para_ENEM_2022_(Prof._Daniel_Reis)
+== Aula_00-Origem_e_Evolução_da_Vida
+#F531 #F532 #F533 #F534 #F535 #F536 #F537
+
+== Aula_01-Ecologia_I
+#F538 #F539 #F540 #F541 #F542
+
+== Aula_02-Ecologia_II
+#F543 #F544 #F545 #F546 #F547 #F548
+
+== Aula_03-Ecologia_III
+#F549 #F550 #F551 #F552 #F553 #F554 #F555
+
+== Aula_04-Citologia_I
+#F556 #F557 #F558 #F559 #F560 #F561 #F562 #F563 #F564 #F565 #F566 #F567 #F568 #F569
+
+== Aula_05-Citologia_II
+#F570 #F571 #F572 #F573
+
+== Aula_06-Citologia_III_Histologia_Animal_e_Biotecnologia
+#F574 #F575 #F576 #F577 #F578 #F579 #F580 #F581 #F582 #F583
+
+== Aula_07-Fisiologia_humana_I
+#F584 #F585 #F586 #F587 #F588 #F589 #F590 #F591
+
+== Aula_08-Fisiologia_humana_II
+#F592 #F593 #F594 #F595 #F596 #F597 #F598 #F599
+
+== Aula_09-Genética
+#F600 #F601 #F602 #F603 #F604 #F605 #F606 #F607 #F608 #F609 #F610 #F611 #F612 #F613 #F614 #F615 #F616
+
+== Aula_10-Seres_Vivos_I
+#F617 #F618 #F619 #F620 #F621 #F622 #F623 #F624 #F625
+
+== Aula_11-Seres_Vivos_II-Reino_Vegetal
+#F626 #F627 #F628 #F629 #F630 #F631 #F632 #F633 #F634
+
+== Aula_12-Seres_Vivos_III-Reino_Animal
+#F635 #F636 #F637 #F638 #F639 #F640 #F641 #F642 #F643
+
+== Aula_13-Programas_de_Saúde
+#F644 #F645 #F646 #F647 #F648 #F649 #F650 #F651 #F652 #F653 #F654 #F655 #F656
+
+
+CANAL: Artes
+
+= 01-Curso_de_Artes_para_ENEM_2022
+== Aula_00_–_Conceitos_Básicos
+#F001 #F002 #F003 #F004 #F005 #F006 #F007 #F008 #F009 #F010
+
+== Aula_01_–_Pré-_História_e_Egito_Antigo
+#F011 #F012 #F013 #F014 #F015
+
+== Aula_02_–_Antiguidade_clássica
+#F016 #F017 #F018 #F019 #F020 #F021
+
+== Aula_03_–_Civilizações_do_Medievo
+#F022 #F023 #F024 #F025 #F026
+
+== Aula_04_–_Arte_na_Idade_Moderna
+#F027 #F028 #F029 #F030 #F031 #F032 #F033 #F034 #F035 #F036
+
+== Aula_05_–_Séculos_XVIII_e_XIX
+#F037 #F038 #F039 #F040 #F041 #F042
+
+== Aula_06_–_Vanguardas_do_século_XX
+#F043 #F044 #F045 #F046 #F047 #F048 #F049 #F050 #F051 #F052
+
+== Aula_07_–_Segunda_metade_do_século_XX
+#F053 #F054 #F055 #F056 #F057 #F058
+
+== Aula_08_–_Arte_Contemporânea
+#F059 #F060 #F061 #F062 #F063 #F064
+
+== Aula_09_-_Patrimônio_e_museu
+#F065 #F066 #F067 #F068 #F069 #F070 #F071 #F072 #F073
+
+== Aula_10_–_Artes_cênicas
+#F074 #F075 #F076 #F077 #F078 #F079
+
+== Aula_11_–_Cinema_e_televisão
+#F080 #F081 #F082 #F083 #F084 #F085
+
+== Aula_12_–_Rádio_e_Música
+#F086 #F087 #F088 #F089 #F090 #F091 #F092 #F093 #F094
+
+= 02-CORUJAFLIX_-_Artes
+== 01-Conceitos_Básicos
+#F095 #F096 #F097 #F098 #F099 #F100 #F101 #F102 #F103 #F104 #F105 #F106 #F107 #F108
+
+== 02-Pré-História
+#F109 #F110 #F111 #F112 #F113
+
+== 03-Egito_Antigo
+#F114 #F115 #F116 #F117 #F118
+
+== 04-Grécia_Antiga
+#F119 #F120 #F121 #F122 #F123
+
+== 05-Roma_Antiga
+#F124 #F125 #F126 #F127
+
+== 06-Bizantina
+#F128 #F129 #F130 #F131
+
+== 07-Islã
+#F132 #F133 #F134 #F135 #F136
+
+== 08-Românica
+#F137 #F138 #F139 #F140 #F141
+
+== 09-Gótica
+#F142 #F143 #F144 #F145 #F146 #F147
+
+== 10-Renascimento
+#F148 #F149 #F150 #F151 #F152 #F153 #F154
+
+== 11-Barroco_e_Maneirismo
+#F155 #F156 #F157 #F158 #F159 #F160
+
+== 12-Rococó
+#F161 #F162 #F163 #F164 #F165
+
+== 13-Neoclássico
+#F166 #F167 #F168 #F169 #F170
+
+== 14-Romantismo
+#F171 #F172 #F173 #F174 #F175
+
+== 15-Realismo
+#F176 #F177 #F178 #F179 #F180
+
+== 16-Impressionismo
+#F181 #F182 #F183
+
+== 17-Pós-Impressionismo
+#F184 #F185
+
+== 18-Pontilhismo
+#F186
+
+== 19-Expressionismo
+#F187 #F188 #F189
+
+== 20-Fauvismo
+#F190
+
+== 21-Simbolismo
+#F191
+
+== 22-Cubismo
+#F192 #F193 #F194 #F195
+
+== 23-Futurismo
+#F196 #F197
+
+== 24-Surrealismo
+#F198
+
+== 25-Dadá
+#F199 #F200 #F201
+
+== 26-Arte_Brasileira
+#F202 #F203 #F204 #F205 #F206 #F207 #F208 #F209 #F210 #F211 #F212 #F213 #F214 #F215 #F216 #F217 #F218
+
+== 27-Art_Nouveau
+#F219 #F220
+
+== 28-Bauhaus
+#F221 #F222
+
+== 29-Realismo_Americano
+#F223 #F224
+
+== 30-Expressionismo_Abstrato
+#F225 #F226
+
+== 31-Land_Art
+#F227
+
+== 32-Op_Art
+#F228
+
+== 33-Pop_Art
+#F229 #F230
+
+== 34-Abstracionismo_Geométrico
+#F231 #F232 #F233 #F234 #F235 #F236
+
+== 35-Arte_Contemporânea
+#F237 #F238 #F239 #F240 #F241 #F242 #F243 #F244 #F245 #F246 #F247
+
+== 36-Teatro
+#F248 #F249 #F250 #F251 #F252 #F253 #F254 #F255 #F256 #F257 #F258 #F259 #F260 #F261 #F262 #F263 #F264 #F265 #F266 #F267 #F268 #F269 #F270 #F271 #F272 #F273
+
+== 37-Dança
+#F274 #F275 #F276 #F277 #F278 #F279 #F280 #F281
+
+== 38-Cinema
+#F282 #F283 #F284 #F285 #F286 #F287 #F288 #F289 #F290 #F291 #F292 #F293 #F294 #F295 #F296 #F297
+
+== 39-Radio_e_TV
+#F298 #F299 #F300 #F301
+
+== 40-Música
+#F302 #F303 #F304 #F305 #F306 #F307 #F308 #F309 #F310 #F311 #F312 #F313 #F314 #F315 #F316
+
+== 41-Patimônio_e_Museu
+#F317 #F318 #F319 #F320 #F321 #F322 #F323 #F324 #F325
+
+== 42-Arte_Africana
+#F326 #F327
+
+== 43-Arte_Latino-Americana
+#F328 #F329 #F330
+
+
+CANAL: Sociologia
+
+= 01-Curso_de_Sociologia_para_ENEM_2022_-_Profª_Alê_Lopes
+== Aula_00_-_Introdução_às_Ciências_Sociais
+#F001 #F002 #F003 #F004 #F005 #F006 #F007 #F008 #F009 #F010
+
+== Aula_01_-_Karl_Marx_e_Max_Weber
+#F011 #F012 #F013 #F014 #F015 #F016 #F017 #F018 #F019 #F020 #F021 #F022
+
+== Aula_02_-_Sociedade_e_Trabalho
+#F023 #F024 #F025 #F026 #F027 #F028 #F029 #F030 #F031 #F032 #F033 #F034 #F035 #F036
+
+== Aula_03_-_Desigualdades_e_vida_social
+#F037 #F038 #F039 #F040 #F041 #F042 #F043 #F044 #F045 #F046 #F047 #F048 #F049 #F050 #F051 #F052 #F053 #F054 #F055
+
+== Aula_04_-_Estado_e_Poder
+#F056 #F057 #F058 #F059 #F060
+
+== Aula_05_-_Cidadania_e_Direitos_Humanos
+#F061 #F062 #F063 #F064 #F065 #F066 #F067 #F068 #F069 #F070 #F071 #F072 #F073 #F074 #F075 #F076 #F077 #F078 #F079 #F080
+
+== Aula_06_-_Cultura_e_Diversidade
+#F081 #F082 #F083 #F084 #F085 #F086 #F087 #F088
+
+== Aula_07_-_Industria_Cultural_e_Consumo
+#F089 #F090 #F091 #F092 #F093
+
+== Aula_08_-_Sociedade_Global
+#F094 #F095 #F096 #F097 #F098 #F099 #F100 #F101 #F102 #F103 #F104 #F105 #F106
+
+= 02-CORUJAFLIX_-_Sociologia
+== 1-Introdução_às_Ciências_Sociais
+#F107 #F108 #F109 #F110 #F111 #F112
+
+== 2-Sociologia_Clássica
+#F113 #F114 #F115 #F116 #F117 #F118 #F119 #F120
+
+== 3-Sociologia_do_Trabalho
+#F121 #F122 #F123 #F124 #F125 #F126
+
+== 4-Ciência_Política
+#F127 #F128 #F129 #F130 #F131
+
+== 5-Direitos_e_Conflitos_Sociais
+#F132 #F133 #F134 #F135 #F136
+
+== 6-Cultura
+#F137 #F138 #F139 #F140
+
+== 7-Sociologia_Contemporânea
+#F141 #F142 #F143 #F144
+
+== 8-Temas_Contemporâneos_da_Sociologia
+#F145 #F146 #F147 #F148 #F149 #F150 #F151
+
+== 9-Sociologia_no_Brasil
+#F152 #F153 #F154 #F155 #F156 #F157 #F158 #F159
+
+
+CANAL: História
+
+= 01-Curso_de_História_para_ENEM_2022_-_Profª_Alê_Lopes
+== 00-ANTIGUIDADE_I
+#F001 #F002 #F003 #F004 #F005 #F006 #F007 #F008 #F009 #F010 #F011 #F012
+
+== 01-ANTIGUIDADE_II
+#F013 #F014 #F015 #F016 #F017 #F018 #F019 #F020 #F021
+
+== 02-MEDIEVO_I
+#F022 #F023 #F024 #F025 #F026 #F027 #F028 #F029 #F030 #F031 #F032 #F033 #F034
+
+== 03-MEDIEVO_II
+#F035 #F036 #F037 #F038 #F039 #F040 #F041 #F042 #F043 #F044 #F045
+
+== 04-MODERNA_I
+#F046 #F047 #F048 #F049 #F050 #F051 #F052 #F053
+
+== 05-MODERNA_II
+#F054 #F055 #F056 #F057 #F058 #F059 #F060 #F061 #F062 #F063 #F064 #F065 #F066 #F067
+
+== 06-COLÔNIA_I
+#F068 #F069 #F070 #F071 #F072 #F073 #F074 #F075 #F076 #F077
+
+== 07-COLÔNIA_II
+#F078 #F079 #F080 #F081 #F082 #F083 #F084 #F085 #F086 #F087 #F088 #F089
+
+== 08-IDADE_MODERNA_III
+#F090 #F091 #F092 #F093 #F094 #F095 #F096 #F097 #F098 #F099
+
+== 09-CONTEMPORÂNEA_I
+#F100 #F101 #F102 #F103 #F104 #F105 #F106 #F107 #F108 #F109 #F110
+
+== 10-CONTEMPORÂNEA_II
+#F111 #F112 #F113 #F114 #F115 #F116 #F117 #F118 #F119 #F120
+
+== 11-INDEPENDÊNCIAS_NA_AMÉRICA_LATINA
+#F121 #F122 #F123
+
+== 12-INDEPENDÊNCIA_DO_BRASIL
+#F124 #F125 #F126 #F127 #F128 #F129
+
+== 13-BRASIL_IMPÉRIO_I
+#F130 #F131 #F132 #F133 #F134 #F135 #F136 #F137 #F138 #F139 #F140 #F141 #F142
+
+== 14-CONTEMPORÂNEA_III
+#F143 #F144 #F145 #F146 #F147 #F148 #F149 #F150
+
+== 15-BRASIL_IMPÉRIO_II
+#F151 #F152 #F153 #F154 #F155 #F156 #F157 #F158 #F159 #F160 #F161 #F162 #F163 #F164 #F165 #F166
+
+== 16-CONTEMPORÂNEA_IV
+#F167 #F168 #F169 #F170 #F171 #F172 #F173 #F174 #F175 #F176
+
+== 17-CONTEMPORÂNEA_V
+#F177 #F178 #F179 #F180 #F181 #F182 #F183 #F184 #F185 #F186 #F187 #F188 #F189 #F190 #F191 #F192 #F193
+
+== 18-BRASIL_REPÚBLICA_I
+#F194 #F195 #F196 #F197 #F198 #F199 #F200 #F201 #F202 #F203 #F204 #F205 #F206 #F207 #F208
+
+== 19-BRASIL_REPÚBLICA_II
+#F209 #F210 #F211 #F212 #F213 #F214 #F215 #F216 #F217 #F218 #F219 #F220 #F221 #F222 #F223 #F224 #F225 #F226 #F227 #F228
+
+== 20-CONTEMPORÂNEA_VI
+#F229 #F230 #F231 #F232 #F233 #F234 #F235 #F236 #F237 #F238 #F239 #F240 #F241 #F242 #F243 #F244 #F245 #F246 #F247 #F248 #F249 #F250 #F251 #F252 #F253 #F254 #F255 #F256 #F257 #F258 #F259
+
+== 21-BRASIL_REPÚBLICA_III
+#F260 #F261 #F262 #F263 #F264 #F265 #F266 #F267 #F268 #F269 #F270 #F271 #F272 #F273
+
+== 22-HISTÓRIA_E_PATRIMÔNIO
+#F274 #F275 #F276 #F277 #F278 #F279 #F280 #F281 #F282 #F283 #F284 #F285
+
+= 02-Curso_de_História_para_ENEM_2022_(Prof._Marco_Túlio)
+== 00-PRÉ-HISTÓRIA_E_CIVILIZAÇÕES_DA_ANTIGUIDADE_ORIENTAL
+#F286 #F287 #F288 #F289 #F290 #F291 #F292 #F293 #F294
+
+== 01-CIVILIZAÇÕES_DA_ANTIGUIDADE_CLÁSSICA
+#F295 #F296 #F297 #F298 #F299 #F300
+
+== 02-CIVILIZAÇÕES_MEDIEVAIS_I
+#F301 #F302 #F303 #F304
+
+== 03-CIVILIZAÇÕES_MEDIEVAIS_II
+#F305 #F306 #F307 #F308 #F309
+
+== 04-IDADE_MODERNA_I
+#F310 #F311 #F312 #F313 #F314 #F315
+
+== 05-IDADE_MODERNA_II
+#F316 #F317 #F318 #F319 #F320 #F321 #F322
+
+== 06-BRASIL_COLÔNIA_I
+#F323 #F324 #F325 #F326 #F327 #F328
+
+== 07-IDADE_MODERNA_III
+#F329 #F330 #F331 #F332 #F333
+
+== 08-BRASIL_COLÔNIA_II
+#F334 #F335 #F336 #F337 #F338 #F339 #F340
+
+== 09-IDADE_CONTEMPORÂNEA_I
+#F341 #F342 #F343 #F344 #F345 #F346
+
+== 10-FORMAÇÃO_DOS_ESTADOS_NA_AMÉRICA_LATINA
+#F347 #F348 #F349 #F350 #F351 #F352
+
+== 11-IDADE_CONTEMPORÂNEA_II
+#F353 #F354 #F355 #F356 #F357
+
+== 12-BRASIL_IMPÉRIO
+#F358 #F359 #F360 #F361 #F362
+
+== 13-BRASIL_REPÚBLICA_I
+#F363 #F364 #F365 #F366 #F367 #F368 #F369
+
+== 14-IDADE_CONTEMPORÂNEA_III
+#F370 #F371 #F372 #F373 #F374 #F375 #F376 #F377 #F378
+
+== 15-BRASIL_REPÚBLICA_II
+#F379 #F380 #F381 #F382 #F383 #F384
+
+== 16-IDADE_CONTEMPORÂNEA_IV
+#F385 #F386 #F387 #F388 #F389 #F390 #F391 #F392
+
+== 17-BRASIL_REPÚBLICA_III
+#F393 #F394 #F395 #F396 #F397 #F398 #F399 #F400 #F401 #F402 #F403 #F404
+
+== 18-MEMÓRIA_E_PATRIMÔNIO
+#F405 #F406 #F407 #F408 #F409 #F410 #F411 #F412
+
+== 19-MAPA_DE_PROVA,_CORREÇÃO_DE_PROVA_E_MATERIAL_EXTRA
+#F413 #F414 #F415 #F416 #F417 #F418 #F419 #F420
+
+== 20-AULA_EXTRA_-_Revisão_para_o_ENEM
+#F421 #F422 #F423 #F424 #F425 #F426 #F427 #F428 #F429 #F430 #F431 #F432 #F433 #F434
+
+== 21-Aula_ExtraVoto_feminino_no_Brasil90_anos
+#F435 #F436 #F437 #F438
+
+= 03-CorujaFlix_-_História_-_Prof._Alê_Lopes
+#F439 #F440 #F441 #F442 #F443 #F444 #F445 #F446 #F447 #F448 #F449 #F450 #F451
+
+= 04-CorujaFlix_-_História_-_Prof._Marco_Túlio
+#F452 #F453 #F454 #F455 #F456 #F457 #F458 #F459 #F460 #F461 #F462 #F463 #F464 #F465 #F466 #F467 #F468 #F469 #F470 #F471 #F472 #F473 #F474 #F475 #F476 #F477 #F478 #F479 #F480 #F481 #F482 #F483 #F484 #F485 #F486 #F487 #F488 #F489 #F490 #F491 #F492 #F493
+
+= 05-CORUJAFLIX_-_História
+== 01-História_Geral
+#F494 #F495 #F496 #F497 #F498 #F499 #F500 #F501 #F502 #F503 #F504 #F505 #F506 #F507 #F508 #F509 #F510 #F511 #F512 #F513 #F514 #F515 #F516 #F517 #F518 #F519 #F520 #F521 #F522 #F523 #F524 #F525 #F526 #F527 #F528 #F529 #F530 #F531 #F532 #F533 #F534 #F535 #F536 #F537 #F538 #F539 #F540 #F541 #F542 #F543 #F544 #F545 #F546 #F547 #F548 #F549 #F550 #F551 #F552 #F553 #F554 #F555 #F556 #F557 #F558 #F559 #F560 #F561 #F562 #F563 #F564 #F565 #F566 #F567 #F568 #F569 #F570 #F571 #F572 #F573 #F574 #F575 #F576 #F577 #F578 #F579 #F580 #F581 #F582 #F583 #F584 #F585 #F586 #F587 #F588 #F589 #F590 #F591 #F592 #F593 #F594 #F595 #F596 #F597 #F598
+
+== 02-História_do_Brasil
+#F599 #F600 #F601 #F602 #F603 #F604 #F605 #F606 #F607 #F608 #F609 #F610 #F611 #F612 #F613 #F614 #F615 #F616 #F617 #F618 #F619 #F620 #F621 #F622 #F623 #F624 #F625 #F626 #F627 #F628 #F629 #F630 #F631 #F632 #F633 #F634 #F635 #F636 #F637 #F638 #F639 #F640 #F641 #F642 #F643 #F644 #F645 #F646 #F647 #F648 #F649 #F650 #F651 #F652 #F653 #F654 #F655 #F656 #F657 #F658 #F659 #F660 #F661 #F662 #F663 #F664 #F665 #F666 #F667 #F668 #F669 #F670 #F671 #F672 #F673 #F674 #F675 #F676 #F677 #F678 #F679 #F680 #F681 #F682 #F683 #F684 #F685 #F686 #F687 #F688 #F689 #F690 #F691 #F692 #F693 #F694 #F695 #F696 #F697 #F698 #F699 #F700 #F701 #F702 #F703 #F704 #F705 #F706
+
+== 03-História_da_América
+#F707 #F708 #F709 #F710 #F711 #F712 #F713 #F714 #F715 #F716 #F717 #F718 #F719 #F720 #F721 #F722 #F723 #F724 #F725 #F726 #F727 #F728 #F729 #F730 #F731 #F732 #F733 #F734 #F735 #F736
+
+== 04-Temática
+#F737 #F738 #F739 #F740 #F741 #F742 #F743 #F744 #F745 #F746 #F747 #F748
+
+
+CANAL: Português
+
+= CORUJAFLIX_-_Gramática_e_Interpretação_de_Texto
+== 1-Conceitos_Básicos_de_Português
+#F001 #F002 #F003 #F004 #F005 #F006 #F007
+
+== 2-Elementos_do_Texto
+#F008 #F009 #F010 #F011 #F012 #F013 #F014 #F015 #F016 #F017 #F018 #F019 #F020 #F021
+
+== 3-Estilística
+#F022 #F023 #F024 #F025 #F026
+
+== 4-Morfologia
+#F027 #F028 #F029 #F030 #F031 #F032 #F033 #F034 #F035 #F036 #F037 #F038 #F039 #F040 #F041 #F042 #F043 #F044 #F045
+
+== 5-Sintaxe_do_Período_Simples
+#F046 #F047 #F048 #F049 #F050 #F051 #F052 #F053 #F054 #F055 #F056 #F057 #F058 #F059
+
+== 6-Sintaxe_do_Período_Composto
+#F060 #F061 #F062 #F063 #F064 #F065 #F066 #F067 #F068 #F069 #F070 #F071 #F072 #F073 #F074 #F075
+
+== 7-Sintaxe_Textual
+#F076 #F077 #F078 #F079 #F080 #F081 #F082 #F083 #F084 #F085 #F086 #F087
+
+== 8-Acentuação
+#F088 #F089 #F090 #F091
+
+== 9-Ortografia
+#F092 #F093 #F094
+
+== 10-Pontuação
+#F095 #F096 #F097
+
+== 11-Interpretação_de_Texto
+#F098 #F099 #F100 #F101 #F102 #F103 #F104
+
+= CorujaFlix_-_Português_-_Prof._Anna_Cabral
+== Aula_01_-_Simbolismo
+#F105 #F106 #F107
+
+== Aula_02_-_Parnasianismo
+#F108 #F109 #F110 #F111 #F112
+
+== Aula_03_-_Pré_Modernismo_
+#F113 #F114 #F115 #F116 #F117
+
+== Aula_04_-_Segunda_Geração_Modernista_
+#F118 #F119 #F120 #F121 #F122 #F123 #F124 #F125 #F126 #F127
+
+== Aula_05_-_Realismo_Naturalismo
+#F128 #F129 #F130
+
+= CORUJAFLIX_-_Redação
+== 1-Redação por Gêneros
+#F131 #F132 #F133 #F134 #F135 #F136 #F137 #F138 #F139 #F140 #F141 #F142 #F143 #F144 #F145 #F146 #F147 #F148 #F149 #F150 #F151 #F152 #F153 #F154 #F155 #F156 #F157 #F158 #F159 #F160 #F161 #F162 #F163 #F164 #F165 #F166 #F167 #F168 #F169 #F170 #F171 #F172 #F173 #F174 #F175 #F176 #F177 #F178 #F179 #F180 #F181 #F182 #F183 #F184 #F185 #F186 #F187 #F188 #F189 #F190 #F191
+
+== 2-Modelos de Proposta
+#F192 #F193 #F194 #F195 #F196 #F197 #F198 #F199 #F200 #F201 #F202
+
+== 3-ENEM
+#F203 #F204
+
+= Curso_Básico_de_Gramática_e_Interpretação_de_Textos
+== 1-Conceitos_Básicos_de_Gramática
+#F205 #F206 #F207
+
+= Curso_de_Gramática_e_Interpretação_de_texto_para_ENEM_2022
+== Aula_00_-_Semântica
+#F208 #F209 #F210 #F211 #F212 #F213
+
+== Aula_01_-_Figuras_de_linguagem_e_efeitos_de_texto
+#F214 #F215 #F216 #F217 #F218 #F219
+
+== Aula_02_-_Níveis_de_significação_do_texto
+#F220 #F221 #F222 #F223 #F224
+
+== Aula_03_-_Variedades_do_português
+#F225 #F226 #F227 #F228 #F229 #F230
+
+== Aula_04_-_Gêneros_Textuais
+#F231 #F232 #F233 #F234 #F235 #F236
+
+== Aula_05_-_Funções_da_linguagem
+#F237 #F238 #F239 #F240 #F241 #F242 #F243 #F244
+
+== Aula_06_-_Tópicos_de_gramática_I
+#F245 #F246 #F247 #F248 #F249 #F250 #F251 #F252 #F253 #F254 #F255 #F256 #F257 #F258 #F259 #F260 #F261
+
+== Aula_07_-_Tópicos_de_gramática_II
+#F262 #F263 #F264 #F265 #F266 #F267 #F268 #F269 #F270 #F271 #F272 #F273 #F274 #F275 #F276 #F277
+
+== Aula_08_-_Acentuação,_ortografia_e_pontuação
+#F278 #F279 #F280 #F281 #F282 #F283 #F284 #F285 #F286 #F287 #F288 #F289 #F290 #F291 #F292 #F293 #F294 #F295
+
+== Aula_09_-_Sintaxe_do_Período_composto
+#F296 #F297 #F298 #F299 #F300 #F301
+
+== Aula_10_-_Sintaxe_Textual
+#F302 #F303 #F304 #F305 #F306 #F307 #F308 #F309 #F310 #F311
+
+== Aula_11_-_Interpretação_texto_literário
+#F312 #F313 #F314 #F315 #F316 #F317 #F318
+
+== Aula_12_-_Interpretação_texto_jornalístico
+#F319 #F320 #F321 #F322 #F323
+
+== Aula_13_-_InterpretaçãoImagens
+#F324 #F325 #F326 #F327 #F328
+
+== Aula_14_-_Interpretação_Texto_teórico_e_científico
+#F329 #F330 #F331 #F332 #F333 #F334
+
+= Curso_de_Redação_para_ENEM_2021
+== Aula_00_-_Fundamentos
+#F335 #F336 #F337 #F338 #F339
+
+== Aula_01_-_Tema_e_projeto_de_texto
+#F340 #F341 #F342 #F343
+
+== Aula_02_-_Introdução
+#F344 #F345 #F346 #F347 #F348 #F349
+
+== Aula_03_-_Argumento_I_evidência
+#F350 #F351 #F352 #F353 #F354 #F355 #F356 #F357
+
+== Aula_04_-_Argumento_IIrelações_lógicas
+#F358 #F359 #F360 #F361 #F362
+
+== Aula_05_-_Conclusão
+#F363 #F364
+
+== Aula_06_-_Coesão_e_coerência
+#F365 #F366 #F367
+
+== Aula_07_-_Linguagem
+#F368 #F369 #F370 #F371 #F372
+== Aula_08_-_Repertório_e_Modelos
+#F373 #F374 #F375 #F376 #F377
+
+= Curso_de_Redação_para_ENEM_2022
+== Aula_00_-_Fundamentos
+#F378 #F379 #F380 #F381 #F382 #F383
+
+== Aula_01_-_Tema_e_projeto_de_texto
+#F384 #F385 #F386 #F387 #F388 #F389 #F390 #F391 #F392
+
+== Aula_02_-_Introdução
+#F393 #F394 #F395 #F396 #F397 #F398
+
+== Aula_03_-_Argumento_I_evidência
+#F399 #F400 #F401 #F402 #F403
+
+== Aula_04_-_Argumento_II_relações_lógicas
+#F404 #F405 #F406 #F407 #F408
+
+== Aula_05_-_Conclusão
+#F409 #F410
+
+== Aula_06_-_Coesão_e_coerência
+#F411 #F412 #F413
+
+== Aula_07_-_Linguagem
+#F414 #F415 #F416 #F417 #F418
+
+== Aula_08_-_Repertório_e_Modelos
+#F419 #F420 #F421 #F422 #F423
+
+== Aula_09_-_Primeiros_Passos_Redação
+#F424 #F425 #F426 #F427 #F428 #F429 #F430 #F431 #F432 #F433 #F434 #F435
+
+== Aula_11_-_Oficina_de_Redação_para_o_ENEM
+#F436 #F437 #F438 #F439 #F440 #F441
+
+
+CANAL: Física
+
+= Curso_de_Física_para_ENEM
+
+== Aula 00 - A Física e as Ondas
+#F001 #F002 #F003 #F004 #F005 #F006 #F007 #F008 #F009 #F010 #F011
+
+== Aula 01 – Fenômenos Ondulatórios e Ondas Sonoras
+#F012 #F013 #F014 #F015 #F016 #F017 #F018 #F019 #F020 #F021 #F022 #F023 #F024 #F025 #F026 #F027 #F028
+
+== Aula 02 – Óptica Geométrica e Suas Imagens
+#F029 #F030 #F031 #F032 #F033 #F034 #F035 #F036 #F037 #F038 #F039 #F040 #F041 #F042 #F043 #F044 #F045 #F046 #F047 #F048 #F049 #F050
+
+== Aula 03 - Cinemática Descrição Matemática de Movimentos
+#F051 #F052 #F053 #F054 #F055 #F056 #F057 #F058 #F059 #F060 #F061 #F062 #F063 #F064 #F065 #F066 #F067 #F068 #F069 #F070 #F071 #F072 #F073 #F074 #F075
+
+== Aula 04 – Mecânica Newtoniana e as Forças
+#F076 #F077 #F078 #F079 #F080 #F081 #F082 #F083 #F084 #F085 #F086 #F087 #F088 #F089 #F090 #F091 #F092 #F093 #F094 #F095 #F096 #F097
+
+== Aula 05 – Energia Mecânica, Quantidade de Movimento e Colisões
+#F098 #F099 #F100 #F101 #F102 #F103 #F104 #F105 #F106 #F107 #F108 #F109 #F110 #F111 #F112 #F113 #F114 #F115 #F116 #F117 #F118 #F119 #F120 #F121
+
+== Aula 06 - Astronomia e Gravitação
+#F122 #F123 #F124 #F125 #F126 #F127 #F128 #F129 #F130 #F131 #F132 #F133 #F134 #F135 #F136 #F137 #F138 #F139
+
+== Aula 07 - Estática de Fluidos
+#F140 #F141 #F142 #F143 #F144 #F145 #F146 #F147 #F148 #F149 #F150 #F151 #F152 #F153 #F154 #F155 #F156 #F157 #F158
+
+== Aula 08 - Termologia e Calor
+#F159 #F160 #F161 #F162 #F163 #F164 #F165 #F166 #F167 #F168 #F169 #F170 #F171 #F172 #F173 #F174 #F175 #F176 #F177 #F178 #F179 #F180 #F181 #F182 #F183 #F184 #F185 #F186 #F187 #F188
+
+== Aula 09 - Termodinâmica e Máquinas Térmicas
+#F189 #F190 #F191 #F192 #F193 #F194 #F195 #F196 #F197 #F198 #F199 #F200 #F201 #F202 #F203 #F204 #F205 #F206 #F207 #F208 #F209 #F210
+
+== Aula 10 - Eletrostática
+#F211 #F212 #F213 #F214 #F215 #F216 #F217 #F218 #F219 #F220 #F221 #F222 #F223 #F224 #F225 #F226
+
+== Aula 11 - Eletrodinâmica
+#F227 #F228 #F229 #F230 #F231 #F232 #F233 #F234 #F235 #F236 #F237 #F238 #F239 #F240 #F241 #F242 #F243 #F244 #F245 #F246 #F247 #F248 #F249 #F250 #F251 #F252 #F253 #F254
+
+== Aula 12 - Eletromagnetismo
+#F255 #F256 #F257 #F258 #F259 #F260 #F261 #F262 #F263 #F264 #F265 #F266 #F267 #F268 #F269 #F270 #F271 #F272 #F273 #F274 #F275 #F276 #F277 #F278 #F279 #F280 #F281 #F282
+
+== Aula 13 - Física Moderna
+#F283 #F284 #F285 #F286 #F287 #F288 #F289 #F290 #F291 #F292 #F293 #F294 #F295 #F296 #F297 #F298 #F299 #F300 #F301 #F302 #F303 #F304 #F305 #F306 #F307 #F308 #F309 #F310 #F311

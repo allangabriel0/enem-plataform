@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+
+# Ambiente
+.env
+
+# Database
+data/enem.db
+data/enem.db-wal
+data/enem.db-shm
+
+# Cache (vídeos e materiais baixados)
+data/cache/
+data/materials/
+
+# Telegram session (CONTÉM SUA CONTA — NUNCA versionar)
+*.session
+*.session-journal
+
+# Logs
+logs/
+
+# Backups
+backups/
+*.bak
+
+# IDE / tools
+.idea/
+.vscode/
+*.swp
+*.swo
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Ruff
+.ruff_cache/
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage

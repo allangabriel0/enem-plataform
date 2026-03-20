@@ -1,0 +1,39 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# =============================================================================
+# .termux/boot/start-enem — Executado automaticamente no boot do Android
+#
+# Requer: Termux:Boot instalado da F-Droid
+# =============================================================================
+
+APP_DIR="$HOME/enem-platform"
+LOG_DIR="$APP_DIR/logs"
+
+mkdir -p "$LOG_DIR"
+
+ts() { date '+%Y-%m-%d %H:%M:%S'; }
+log() { echo "[$(ts)] [boot] $*" >> "$LOG_DIR/boot.log"; }
+
+log "Boot iniciado"
+
+# Mantém o CPU ativo (evita que o Android suspenda o processo)
+termux-wake-lock
+log "Wake lock ativado"
+
+# Aguarda o sistema carregar completamente (Wi-Fi, armazenamento)
+sleep 10
+log "Aguardo de boot concluído"
+
+# Inicia SSH para acesso remoto
+sshd
+log "sshd iniciado"
+
+# Inicia crond (watchdog e backups agendados)
+if ! pgrep -x crond &>/dev/null; then
+    crond
+    log "crond iniciado"
+fi
+
+# Inicia a plataforma ENEM
+log "Iniciando app..."
+bash "$APP_DIR/scripts/start.sh" >> "$LOG_DIR/boot.log" 2>&1
+log "start.sh concluído"
