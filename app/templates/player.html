@@ -294,6 +294,16 @@
       </div>
     </div>
 
+    <!-- Botão marcar seção como concluída -->
+    <div style="padding:.4rem .85rem .35rem;border-bottom:1px solid var(--border)">
+      <button id="btn-section-done"
+              class="btn btn-ghost btn-sm"
+              style="width:100%;font-size:.75rem"
+              data-section-ids="{{ section_videos | map(attribute='id') | list | tojson }}">
+        ✓ Marcar seção como concluída
+      </button>
+    </div>
+
     <!-- Lista de seções e vídeos -->
     <div style="padding-bottom:.5rem">
       {% for secao, videos in course_sections.items() %}
@@ -353,8 +363,9 @@
 (function () {
 'use strict';
 
-const VIDEO_ID   = {{ video.id }};
-const RESUME_AT  = parseFloat('{{ progress.current_time | round(1) if progress else 0 }}');
+const VIDEO_ID    = {{ video.id }};
+const RESUME_AT   = parseFloat('{{ progress.current_time | round(1) if progress else 0 }}');
+const VIDEO_TITLE = {{ video.title | tojson }};
 
 /* ------------------------------------------------------------------
    1. Video.js init
@@ -369,6 +380,19 @@ const player = videojs('enem-player', {
 player.ready(function () {
   if (RESUME_AT > 5) {
     this.currentTime(RESUME_AT);
+  }
+});
+
+/* ------------------------------------------------------------------
+   1b. Keyboard shortcuts J/L (±10s, YouTube style)
+   ------------------------------------------------------------------ */
+document.addEventListener('keydown', (e) => {
+  // Não intercepta se o foco está num input/textarea
+  if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+  if (e.key === 'j' || e.key === 'J') {
+    player.currentTime(Math.max(0, player.currentTime() - 10));
+  } else if (e.key === 'l' || e.key === 'L') {
+    player.currentTime(player.currentTime() + 10);
   }
 });
 
@@ -401,7 +425,17 @@ window.addEventListener('beforeunload', saveProgress);
 const tsPreview = document.getElementById('note-ts-preview');
 
 player.on('timeupdate', function () {
-  if (tsPreview) tsPreview.textContent = '@ ' + formatTime(Math.floor(player.currentTime()));
+  const cur = Math.floor(player.currentTime());
+  if (tsPreview) tsPreview.textContent = '@ ' + formatTime(cur);
+  document.title = '▶ ' + formatTime(cur) + ' — ' + VIDEO_TITLE;
+});
+
+player.on('pause', function () {
+  document.title = '⏸ ' + formatTime(Math.floor(player.currentTime())) + ' — ' + VIDEO_TITLE;
+});
+
+player.on('ended', function () {
+  document.title = VIDEO_TITLE;
 });
 
 /* ------------------------------------------------------------------
@@ -411,6 +445,11 @@ const noteForm    = document.getElementById('note-form');
 const noteContent = document.getElementById('note-content');
 const notesList   = document.getElementById('notes-list');
 const notesEmpty  = document.getElementById('notes-empty');
+
+// Auto-pausa ao focar no campo de anotação
+noteContent && noteContent.addEventListener('focus', () => {
+  if (!player.paused()) player.pause();
+});
 
 // Submete nova anotação
 noteForm && noteForm.addEventListener('submit', async (e) => {
@@ -538,6 +577,29 @@ btnCache && btnCache.addEventListener('click', async () => {
     showToast('Erro ao iniciar cache', 'error');
     btnCache.disabled = false;
     btnCache.textContent = '↓ Cachear';
+  }
+});
+
+/* ------------------------------------------------------------------
+   7. Section complete
+   ------------------------------------------------------------------ */
+const btnSectionDone = document.getElementById('btn-section-done');
+btnSectionDone && btnSectionDone.addEventListener('click', async () => {
+  const ids = JSON.parse(btnSectionDone.dataset.sectionIds || '[]');
+  if (!ids.length) return;
+  btnSectionDone.disabled = true;
+  try {
+    const resp = await fetch('/api/section-complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ video_ids: ids }),
+    });
+    const data = await resp.json();
+    showToast(`${data.marked} vídeos marcados como concluídos`, 'success');
+    setTimeout(() => location.reload(), 1200);
+  } catch {
+    showToast('Erro ao marcar seção', 'error');
+    btnSectionDone.disabled = false;
   }
 });
 

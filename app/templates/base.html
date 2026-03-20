@@ -2,6 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="theme-color" content="#6366f1">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/static/manifest.json">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}ENEM Studies{% endblock %}</title>
   <link rel="stylesheet" href="/static/css/style.css">
@@ -66,5 +69,10 @@
 
 <script src="/static/js/app.js"></script>
 {% block scripts %}{% endblock %}
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/static/sw.js').catch(() => {});
+}
+</script>
 </body>
 </html>

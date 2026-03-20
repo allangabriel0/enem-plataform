@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Página não encontrada — ENEM Studies{% endblock %}
+{% block content %}
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+            min-height:60vh;text-align:center;gap:1rem">
+  <div style="font-size:5rem;font-weight:800;color:var(--primary);line-height:1">404</div>
+  <h1 style="font-size:1.4rem;color:var(--text)">Página não encontrada</h1>
+  <p style="color:var(--text-muted);max-width:380px">
+    O conteúdo que você procura não existe ou foi movido.
+  </p>
+  <div style="display:flex;gap:.75rem;margin-top:.5rem">
+    <a href="/" class="btn btn-primary">← Dashboard</a>
+    <a href="javascript:history.back()" class="btn btn-ghost">Voltar</a>
+  </div>
+</div>
+{% endblock %}

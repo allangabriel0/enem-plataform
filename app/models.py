@@ -148,3 +148,12 @@ class ScheduleItem(Base):
     )
 
     user: Mapped["User"] = relationship("User", back_populates="schedule_items")
+
+
+class SyncState(Base):
+    __tablename__ = "sync_state"
+
+    group_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    last_message_id: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_sync_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    videos_total: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

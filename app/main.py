@@ -73,6 +73,14 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    # Apenas para rotas HTML (não API)
+    if request.url.path.startswith("/api/"):
+        return JSONResponse(status_code=404, content={"detail": "Não encontrado."})
+    return templates.TemplateResponse(request, "404.html", {}, status_code=404)
+
+
 # ---------------------------------------------------------------------------
 # Rotas base
 # ---------------------------------------------------------------------------
@@ -84,7 +92,8 @@ async def health_check():
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
-    return Response(status_code=204)
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/static/favicon.svg")
 
 
 # ---------------------------------------------------------------------------

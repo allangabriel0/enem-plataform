@@ -140,3 +140,41 @@ async def get_progress_route(
         duration=record.duration,
         completed=record.completed,
     )
+
+
+class SectionCompleteIn(BaseModel):
+    video_ids: list[int]
+
+
+@router.post("/api/section-complete")
+async def mark_section_complete(
+    data: SectionCompleteIn,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Marca todos os vídeos de uma seção como concluídos."""
+    from app.models import Video
+    marked = 0
+    for vid_id in data.video_ids:
+        video = db.query(Video).filter_by(id=vid_id).first()
+        if not video:
+            continue
+        record = db.query(WatchProgress).filter_by(user_id=user.id, video_id=vid_id).first()
+        dur = float(video.duration or 0)
+        if record is None:
+            record = WatchProgress(
+                user_id=user.id,
+                video_id=vid_id,
+                current_time=dur,
+                duration=dur,
+                completed=True,
+            )
+            db.add(record)
+        else:
+            record.completed = True
+            record.current_time = max(record.current_time, dur)
+            record.last_watched = datetime.utcnow()
+        marked += 1
+    db.commit()
+    logger.info("section-complete: user=%d marcou %d vídeos como concluídos", user.id, marked)
+    return {"marked": marked}

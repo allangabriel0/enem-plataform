@@ -2,40 +2,38 @@
 routers/sync.py — Sincronização da biblioteca com o Telegram.
 
 Endpoints:
-  POST /api/sync-videos — varre os grupos configurados, faz upsert de vídeos
-                          e materiais no banco, retorna estatísticas.
+  POST /api/sync-videos         — sync incremental (só mensagens novas)
+  POST /api/sync-videos?force=1 — sync completo (re-varre tudo)
 
-Upsert de vídeos: delegado a fetch_library_from_groups() do telegram_client.
-Upsert de materiais: implementado aqui, seguindo o mesmo padrão.
-
-Materiais são mensagens com documentos não-vídeo (PDF, ZIP, RAR, etc.).
-A extensão é extraída do mime_type ou do nome do arquivo.
+Upsert de vídeos e materiais: identificados por (group_id, message_id).
+Sync incremental: guarda o maior message_id visto em SyncState e na próxima
+execução usa min_id para pular mensagens já processadas.
 """
 import logging
 import os
+from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.config import settings
 from app.database import get_db
-from app.models import Material, User
+from app.models import Material, SyncState, User
 from app.utils.text import clean_title
 
 logger = logging.getLogger("enem")
 
 router = APIRouter()
 
-# MIME types que identificam materiais (não-vídeo)
 _MATERIAL_MIMES = {
     "application/pdf",
     "application/zip",
     "application/x-zip-compressed",
     "application/x-rar-compressed",
     "application/vnd.rar",
-    "application/octet-stream",   # RAR/ZIP genérico
+    "application/octet-stream",
     "application/x-7z-compressed",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -46,12 +44,7 @@ _MATERIAL_MIMES = {
 _MATERIAL_EXTS = {".pdf", ".zip", ".rar", ".7z", ".doc", ".docx", ".ppt", ".pptx"}
 
 
-# ---------------------------------------------------------------------------
-# Helpers internos — detecção e extração de materiais
-# ---------------------------------------------------------------------------
-
 def _is_material_message(message) -> bool:
-    """True se a mensagem contém um documento que é material (não-vídeo)."""
     if not message.media:
         return False
     doc = getattr(message.media, "document", None)
@@ -62,12 +55,21 @@ def _is_material_message(message) -> bool:
         return False
     if mime in _MATERIAL_MIMES:
         return True
-    # Fallback: verifica a extensão do nome do arquivo
     fname = _extract_filename(doc)
     if fname:
         ext = os.path.splitext(fname)[1].lower()
         return ext in _MATERIAL_EXTS
     return False
+
+
+def _is_video_message(message) -> bool:
+    if not message.media:
+        return False
+    doc = getattr(message.media, "document", None)
+    if doc is None:
+        return False
+    mime = getattr(doc, "mime_type", "") or ""
+    return mime.startswith("video/")
 
 
 def _extract_filename(document) -> Optional[str]:
@@ -82,7 +84,6 @@ def _extract_filename(document) -> Optional[str]:
 
 
 def _extract_ext(document) -> Optional[str]:
-    """Extrai extensão a partir do filename ou mime_type."""
     fname = _extract_filename(document)
     if fname:
         ext = os.path.splitext(fname)[1].lower()
@@ -99,19 +100,60 @@ def _extract_ext(document) -> Optional[str]:
     return _MIME_TO_EXT.get(mime)
 
 
-# ---------------------------------------------------------------------------
-# Upsert de material
-# ---------------------------------------------------------------------------
+def _extract_duration(document) -> Optional[int]:
+    try:
+        from telethon.tl.types import DocumentAttributeVideo
+        for attr in document.attributes:
+            if isinstance(attr, DocumentAttributeVideo):
+                return attr.duration
+    except Exception:
+        pass
+    return None
+
+
+def _upsert_video(db: Session, message, group_id: int, group_name: str) -> bool:
+    from app.models import Video
+    from app.telegram_client import extract_tag
+
+    doc = message.media.document
+    msg_text = message.text or ""
+    tag = extract_tag(msg_text)
+    title = clean_title(msg_text.split("\n")[0]) or f"Vídeo {message.id}"
+
+    existing = (
+        db.query(Video)
+        .filter_by(telegram_group_id=group_id, telegram_message_id=message.id)
+        .first()
+    )
+
+    if existing is None:
+        from app.models import Video as V
+        video = V(
+            telegram_message_id=message.id,
+            telegram_group_id=group_id,
+            telegram_group_name=group_name,
+            title=title,
+            description=msg_text or None,
+            duration=_extract_duration(doc),
+            file_size=doc.size,
+            menu_tag=tag,
+            filename=_extract_filename(doc),
+        )
+        db.add(video)
+        db.commit()
+        return True
+    else:
+        existing.title = title
+        existing.description = msg_text or None
+        existing.duration = _extract_duration(doc)
+        existing.file_size = doc.size
+        existing.menu_tag = tag
+        existing.filename = _extract_filename(doc)
+        db.commit()
+        return False
+
 
 def _upsert_material(db: Session, message, group_id: int, group_name: str) -> bool:
-    """
-    Cria ou atualiza um registro Material.
-    Retorna True se inserção, False se atualização.
-
-    Padrão idêntico ao _upsert_video do telegram_client:
-      - identifica pelo par (telegram_group_id, telegram_message_id)
-      - atualiza todos os campos extraíveis em caso de colisão
-    """
     from app.telegram_client import extract_tag
 
     doc = message.media.document
@@ -146,9 +188,6 @@ def _upsert_material(db: Session, message, group_id: int, group_name: str) -> bo
         )
         db.add(material)
         db.commit()
-        logger.debug(
-            "Material adicionado: msg=%d grupo=%s tag=%s", message.id, group_name, tag
-        )
         return True
     else:
         existing.title = title
@@ -158,80 +197,32 @@ def _upsert_material(db: Session, message, group_id: int, group_name: str) -> bo
         existing.file_ext = _extract_ext(doc)
         existing.file_size = doc.size
         db.commit()
-        logger.debug("Material atualizado: msg=%d grupo=%s", message.id, group_name)
         return False
 
 
-# ---------------------------------------------------------------------------
-# Sync de materiais (paralelo ao fetch_library_from_groups do telegram_client)
-# ---------------------------------------------------------------------------
+def _get_sync_state(db: Session, group_id: int) -> SyncState:
+    state = db.query(SyncState).filter_by(group_id=group_id).first()
+    if state is None:
+        state = SyncState(group_id=group_id, last_message_id=0, videos_total=0)
+        db.add(state)
+        db.commit()
+        db.refresh(state)
+    return state
 
-async def _sync_materials(db: Session) -> dict:
-    """
-    Varre os grupos configurados buscando documentos não-vídeo (materiais).
-    Retorna {"added": int, "updated": int, "errors": int}.
-    """
-    from app.telegram_client import get_telegram_client
-
-    client = await get_telegram_client()
-    stats = {"added": 0, "updated": 0, "errors": 0}
-
-    for group_id in settings.TELEGRAM_GROUP_IDS:
-        try:
-            entity = await client.get_entity(group_id)
-            group_name: str = getattr(entity, "title", str(group_id))
-        except Exception:
-            logger.error(
-                "sync_materials: não foi possível obter grupo %s", group_id, exc_info=True
-            )
-            stats["errors"] += 1
-            continue
-
-        mat_count = 0
-        async for message in client.iter_messages(entity, limit=settings.TELEGRAM_FETCH_LIMIT):
-            if not _is_material_message(message):
-                continue
-            try:
-                added = _upsert_material(db, message, group_id, group_name)
-                if added:
-                    stats["added"] += 1
-                else:
-                    stats["updated"] += 1
-                mat_count += 1
-            except Exception:
-                logger.error(
-                    "sync_materials: erro na mensagem %d grupo %s",
-                    message.id, group_id, exc_info=True,
-                )
-                stats["errors"] += 1
-
-        logger.info(
-            "sync_materials: grupo %s — %d materiais processados.", group_name, mat_count
-        )
-
-    return stats
-
-
-# ---------------------------------------------------------------------------
-# Endpoint
-# ---------------------------------------------------------------------------
 
 @router.post("/api/sync-videos")
 async def sync_videos(
+    force: bool = Query(default=False, description="Reprocessa todas as mensagens, ignorando o último ID salvo"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """
     Sincroniza vídeos e materiais de todos os grupos Telegram configurados.
 
-    Fluxo:
-      1. Itera grupos em settings.TELEGRAM_GROUP_IDS
-      2. Para cada grupo: vídeos via fetch_library_from_groups(),
-         materiais via _sync_materials()
-      3. Registra "Sincronizando X vídeos e Y materiais do grupo Z"
-      4. Retorna {synced, updated, total, materials}
+    Modo incremental (padrão): usa min_id para buscar só mensagens novas.
+    Modo forçado (?force=1): reprocessa tudo a partir do zero.
     """
-    from app.telegram_client import fetch_library_from_groups
+    from app.telegram_client import get_telegram_client
 
     if not settings.TELEGRAM_GROUP_IDS:
         raise HTTPException(
@@ -239,28 +230,81 @@ async def sync_videos(
             detail="Nenhum grupo Telegram configurado. Verifique TELEGRAM_GROUP_IDS no .env.",
         )
 
+    client = await get_telegram_client()
+    total_stats = {"added": 0, "updated": 0, "materials": 0, "errors": 0}
+
+    for group_id in settings.TELEGRAM_GROUP_IDS:
+        state = _get_sync_state(db, group_id)
+        min_id = 0 if force else state.last_message_id
+
+        try:
+            entity = await client.get_entity(group_id)
+            group_name: str = getattr(entity, "title", str(group_id))
+        except Exception:
+            logger.error("sync: não foi possível obter grupo %s", group_id, exc_info=True)
+            total_stats["errors"] += 1
+            continue
+
+        mode = "completo" if force else f"incremental (min_id={min_id})"
+        logger.info("Sincronizando grupo %s — modo %s", group_name, mode)
+
+        max_seen_id = min_id
+        v_added = v_updated = m_count = 0
+
+        async for message in client.iter_messages(
+            entity,
+            limit=settings.TELEGRAM_FETCH_LIMIT,
+            min_id=min_id,
+        ):
+            if message.id > max_seen_id:
+                max_seen_id = message.id
+
+            if _is_video_message(message):
+                try:
+                    added = _upsert_video(db, message, group_id, group_name)
+                    if added:
+                        v_added += 1
+                    else:
+                        v_updated += 1
+                except Exception:
+                    logger.error("sync: erro vídeo msg=%d grupo=%s", message.id, group_id, exc_info=True)
+                    total_stats["errors"] += 1
+
+            elif _is_material_message(message):
+                try:
+                    _upsert_material(db, message, group_id, group_name)
+                    m_count += 1
+                except Exception:
+                    logger.error("sync: erro material msg=%d grupo=%s", message.id, group_id, exc_info=True)
+                    total_stats["errors"] += 1
+
+        # Atualiza SyncState
+        if max_seen_id > state.last_message_id:
+            state.last_message_id = max_seen_id
+        state.last_sync_at = datetime.utcnow()
+        state.videos_total += v_added
+        db.commit()
+
+        total_stats["added"] += v_added
+        total_stats["updated"] += v_updated
+        total_stats["materials"] += m_count
+
+        logger.info(
+            "Grupo %s: +%d vídeos, ~%d atualizados, %d materiais. max_id=%d",
+            group_name, v_added, v_updated, m_count, max_seen_id,
+        )
+
     logger.info(
-        "Iniciando sync: %d grupo(s) configurado(s).", len(settings.TELEGRAM_GROUP_IDS)
-    )
-
-    video_stats = await fetch_library_from_groups(db)
-    mat_stats = await _sync_materials(db)
-
-    synced = video_stats["added"]
-    updated = video_stats["updated"]
-    total = synced + updated
-    materials = mat_stats["added"] + mat_stats["updated"]
-
-    logger.info(
-        "Sync concluído: %d vídeos novos, %d atualizados, %d materiais novos/atualizados. "
-        "Erros: vídeos=%d materiais=%d",
-        synced, updated, materials,
-        video_stats.get("errors", 0), mat_stats.get("errors", 0),
+        "Sync concluído: %d novos, %d atualizados, %d materiais, %d erros",
+        total_stats["added"], total_stats["updated"],
+        total_stats["materials"], total_stats["errors"],
     )
 
     return {
-        "synced": synced,
-        "updated": updated,
-        "total": total,
-        "materials": materials,
+        "synced": total_stats["added"],
+        "updated": total_stats["updated"],
+        "total": total_stats["added"] + total_stats["updated"],
+        "materials": total_stats["materials"],
+        "errors": total_stats["errors"],
+        "mode": "force" if force else "incremental",
     }

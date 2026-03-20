@@ -18,6 +18,7 @@ Funções de serviço (topo do arquivo, testáveis isoladamente):
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
@@ -29,7 +30,7 @@ from sqlalchemy.orm import Session
 from app.auth import get_current_user
 from app.database import get_db
 from app.menu_parser import group_videos_for_dashboard, parse_menu_file
-from app.models import Material, User, Video, WatchProgress
+from app.models import Material, SyncState, User, Video, WatchProgress
 
 logger = logging.getLogger("enem")
 
@@ -196,6 +197,12 @@ def _get_materials_by_group(db: Session) -> dict[str, list[Material]]:
     return result
 
 
+def _get_last_sync_at(db: Session) -> Optional[datetime]:
+    """Retorna o datetime da sincronização mais recente entre todos os grupos."""
+    state = db.query(SyncState).order_by(SyncState.last_sync_at.desc()).first()
+    return state.last_sync_at if state else None
+
+
 # ---------------------------------------------------------------------------
 # Rota
 # ---------------------------------------------------------------------------
@@ -206,6 +213,7 @@ async def dashboard(
     group: Optional[str] = Query(default=None),
     subject: Optional[str] = Query(default=None),
     search: Optional[str] = Query(default=None),
+    only_unwatched: bool = Query(default=False),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -233,16 +241,22 @@ async def dashboard(
     # Vídeos com filtros aplicados
     videos = _get_videos(db, group=f_group, subject=f_subject, search=f_search)
 
-    # Agrupamento hierárquico via menu_parser
-    menu_entries = parse_menu_file()
-    grouped_videos = group_videos_for_dashboard(videos, menu_entries)
-
     # Progresso do usuário (sem filtro — tudo o que ele assistiu)
     progresses = (
         db.query(WatchProgress)
         .filter_by(user_id=user.id)
         .all()
     )
+
+    # Filtro "não assistidos"
+    if only_unwatched:
+        watched_ids = {p.video_id for p in progresses if p.completed}
+        videos = [v for v in videos if v.id not in watched_ids]
+
+    # Agrupamento hierárquico via menu_parser
+    menu_entries = parse_menu_file()
+    grouped_videos = group_videos_for_dashboard(videos, menu_entries)
+
     progress_map = build_progress_map(progresses)
 
     # Progresso por seção e curso
@@ -257,6 +271,9 @@ async def dashboard(
 
     # Materiais por grupo
     materials_by_group = _get_materials_by_group(db)
+
+    # Última sincronização
+    last_sync_at = _get_last_sync_at(db)
 
     # Opções para filtros (distintos, ordenados)
     subjects: list[str] = sorted(
@@ -285,10 +302,12 @@ async def dashboard(
             "materials_by_group": materials_by_group,
             "subjects": subjects,
             "groups": groups,
+            "last_sync_at": last_sync_at,
             "filters": {
                 "group": f_group,
                 "subject": f_subject,
                 "search": f_search,
+                "only_unwatched": only_unwatched,
             },
         },
     )

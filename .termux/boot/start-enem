@@ -7,33 +7,89 @@
 
 APP_DIR="$HOME/enem-platform"
 LOG_DIR="$APP_DIR/logs"
+ENV_FILE="$APP_DIR/.env"
 
 mkdir -p "$LOG_DIR"
 
-ts() { date '+%Y-%m-%d %H:%M:%S'; }
-log() { echo "[$(ts)] [boot] $*" >> "$LOG_DIR/boot.log"; }
+ts()  { date '+%Y-%m-%d %H:%M:%S'; }
+log() { echo "[$(ts)] [boot] $*" | tee -a "$LOG_DIR/boot.log"; }
 
+log "============================================"
 log "Boot iniciado"
 
-# Mantém o CPU ativo (evita que o Android suspenda o processo)
+# Mantém CPU ativo — impede que Android suspenda o processo
 termux-wake-lock
 log "Wake lock ativado"
 
-# Aguarda o sistema carregar completamente (Wi-Fi, armazenamento)
-sleep 10
+# Aguarda o sistema carregar (Wi-Fi, armazenamento, daemons do Android)
+sleep 15
 log "Aguardo de boot concluído"
 
-# Inicia SSH para acesso remoto
-sshd
-log "sshd iniciado"
-
-# Inicia crond (watchdog e backups agendados)
-if ! pgrep -x crond &>/dev/null; then
-    crond
-    log "crond iniciado"
+# ─────────────────────────────────────────────
+# SSH
+# ─────────────────────────────────────────────
+if ! pgrep -x sshd &>/dev/null; then
+    sshd && log "sshd iniciado" || log "ERRO: sshd falhou"
+else
+    log "sshd já estava rodando"
 fi
 
-# Inicia a plataforma ENEM
-log "Iniciando app..."
+# ─────────────────────────────────────────────
+# Crond (watchdog + backups)
+# ─────────────────────────────────────────────
+if ! pgrep -x crond &>/dev/null; then
+    crond && log "crond iniciado" || log "ERRO: crond falhou"
+else
+    log "crond já estava rodando"
+fi
+
+# ─────────────────────────────────────────────
+# SD card — verifica se o caminho no .env ainda é válido
+# ─────────────────────────────────────────────
+if [ -f "$ENV_FILE" ]; then
+    SAVED_SD=$(grep "^SD_CARD_PATH=" "$ENV_FILE" 2>/dev/null | cut -d= -f2 | tr -d '[:space:]')
+
+    if [ -n "$SAVED_SD" ] && [ ! -d "$SAVED_SD" ]; then
+        log "SD card '$SAVED_SD' não acessível — tentando detectar novo caminho..."
+        NEW_SD=""
+        for candidate in /storage/*/; do
+            if [[ "$candidate" != *emulated* ]] && [ -d "$candidate" ]; then
+                NEW_SD="${candidate%/}"
+                break
+            fi
+        done
+        if [ -n "$NEW_SD" ]; then
+            sed -i "s|^SD_CARD_PATH=.*|SD_CARD_PATH=$NEW_SD|" "$ENV_FILE"
+            log "SD card detectado em $NEW_SD — .env atualizado"
+        else
+            log "SD card não encontrado — cache usará armazenamento interno"
+        fi
+    elif [ -n "$SAVED_SD" ] && [ -d "$SAVED_SD" ]; then
+        log "SD card OK: $SAVED_SD"
+    else
+        # Tenta detectar SD pela primeira vez
+        for candidate in /storage/*/; do
+            if [[ "$candidate" != *emulated* ]] && [ -d "$candidate" ]; then
+                NEW_SD="${candidate%/}"
+                echo "SD_CARD_PATH=$NEW_SD" >> "$ENV_FILE"
+                log "SD card detectado pela 1ª vez: $NEW_SD — adicionado ao .env"
+                break
+            fi
+        done
+    fi
+fi
+
+# ─────────────────────────────────────────────
+# Plataforma ENEM
+# ─────────────────────────────────────────────
+log "Iniciando plataforma ENEM..."
 bash "$APP_DIR/scripts/start.sh" >> "$LOG_DIR/boot.log" 2>&1
-log "start.sh concluído"
+STATUS=$?
+if [ $STATUS -eq 0 ]; then
+    log "Plataforma iniciada com sucesso"
+else
+    log "ERRO: start.sh retornou $STATUS"
+fi
+
+log "Boot finalizado"
+log "============================================"

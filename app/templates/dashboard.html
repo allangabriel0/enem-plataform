@@ -26,6 +26,13 @@
   </button>
 </div>
 
+{% if last_sync_at %}
+<div style="font-size:.75rem;color:var(--text-dim);margin-bottom:1rem">
+  Última sincronização: {{ last_sync_at.strftime('%d/%m/%Y %H:%M') }}
+  — <a href="#" id="btn-sync-force" style="color:var(--primary-h)">⟳ Forçar sync completo</a>
+</div>
+{% endif %}
+
 <!-- =====================================================================
      Stats bar
      ===================================================================== -->
@@ -99,7 +106,14 @@
 
   <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
 
-  {% if filters.group or filters.subject or filters.search %}
+  <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:var(--text-muted);cursor:pointer">
+    <input type="checkbox" name="only_unwatched" value="1"
+           {% if filters.only_unwatched %}checked{% endif %}
+           onchange="this.form.submit()">
+    Não assistidos
+  </label>
+
+  {% if filters.group or filters.subject or filters.search or filters.only_unwatched %}
     <a href="/" class="btn btn-ghost btn-sm">✕ Limpar</a>
   {% endif %}
 </form>
@@ -323,14 +337,17 @@
 <script>
 /* Sincronização com Telegram */
 (function () {
-  function doSync(btn) {
+  function doSync(btn, force) {
     if (!btn) return;
     const icon = btn.querySelector('#sync-icon') || btn;
     btn.disabled = true;
-    icon.textContent = '↻';
+    if (icon !== btn) {
+      icon.textContent = '↻';
+    }
     btn.style.opacity = '.6';
 
-    fetch('/api/sync-videos', { method: 'POST' })
+    const url = '/api/sync-videos' + (force ? '?force=1' : '');
+    fetch(url, { method: 'POST' })
       .then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
@@ -347,15 +364,19 @@
       })
       .finally(() => {
         btn.disabled = false;
-        icon.textContent = '⟳';
+        if (icon !== btn) {
+          icon.textContent = '⟳';
+        }
         btn.style.opacity = '';
       });
   }
 
   const btnSync = document.getElementById('btn-sync');
   const btnSyncEmpty = document.getElementById('btn-sync-empty');
-  if (btnSync)      btnSync.addEventListener('click', () => doSync(btnSync));
-  if (btnSyncEmpty) btnSyncEmpty.addEventListener('click', () => doSync(btnSyncEmpty));
+  const btnSyncForce = document.getElementById('btn-sync-force');
+  if (btnSync)      btnSync.addEventListener('click', (e) => { e.preventDefault(); doSync(btnSync, false); });
+  if (btnSyncEmpty) btnSyncEmpty.addEventListener('click', () => doSync(btnSyncEmpty, false));
+  if (btnSyncForce) btnSyncForce.addEventListener('click', (e) => { e.preventDefault(); doSync(btnSyncForce, true); });
 })();
 </script>
 {% endblock %}
